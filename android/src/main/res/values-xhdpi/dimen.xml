@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="card_input_padding">8dp</dimen>
+    <dimen name="cvv_logo_height">34dp</dimen>
+    <dimen name="cvv_logo_width">54dp</dimen>
+</resources>
