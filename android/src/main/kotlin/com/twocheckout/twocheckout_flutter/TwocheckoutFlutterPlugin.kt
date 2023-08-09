@@ -104,8 +104,7 @@ class TwocheckoutFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
   }
 
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
-    if (call.method == "getPlatformVersion") {
-      result.success("Android111 ${android.os.Build.VERSION.RELEASE}")
+    if (call.method == "showPaymentMethods") {
       showPaymentOptions(context)
     } else {
       result.notImplemented()
@@ -218,11 +217,11 @@ class TwocheckoutFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
   }
 */
   private fun showLoadingSpinner() {
-    activity.runOnUiThread {
+    /*activity.runOnUiThread {
       progressDialog.setTitle("Processing transaction...")
       progressDialog.setCancelable(true)
       progressDialog.show()
-    }
+    }*/
   }
 
   private fun onCreditCardInput(cardPaymentToken:String) {

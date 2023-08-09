@@ -9,7 +9,7 @@ class MockTwocheckoutFlutterPlatform
     implements TwocheckoutFlutterPlatform {
 
   @override
-  Future<String?> getPlatformVersion() => Future.value('42');
+  Future<String?> showPaymentMethods() => Future.value('42');
 }
 
 void main() {
@@ -24,6 +24,6 @@ void main() {
     MockTwocheckoutFlutterPlatform fakePlatform = MockTwocheckoutFlutterPlatform();
     TwocheckoutFlutterPlatform.instance = fakePlatform;
 
-    expect(await twocheckoutFlutterPlugin.getPlatformVersion(), '42');
+    expect(await twocheckoutFlutterPlugin.showPaymentMethods(), '42');
   });
 }
