@@ -23,7 +23,7 @@ abstract class TwocheckoutFlutterPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  Future<String?> getPlatformVersion() {
-    throw UnimplementedError('platformVersion() has not been implemented.');
+  Future<String?> showPaymentMethods() {
+    throw UnimplementedError('showPaymentMethods() has not been implemented.');
   }
 }

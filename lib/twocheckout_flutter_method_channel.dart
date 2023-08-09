@@ -10,8 +10,8 @@ class MethodChannelTwocheckoutFlutter extends TwocheckoutFlutterPlatform {
   final methodChannel = const MethodChannel('twocheckout_flutter');
 
   @override
-  Future<String?> getPlatformVersion() async {
-    final version = await methodChannel.invokeMethod<String>('getPlatformVersion');
+  Future<String?> showPaymentMethods() async {
+    final version = await methodChannel.invokeMethod<String>('showPaymentMethods');
     return version;
   }
 }
