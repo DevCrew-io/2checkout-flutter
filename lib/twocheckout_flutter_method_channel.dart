@@ -14,4 +14,16 @@ class MethodChannelTwocheckoutFlutter extends TwocheckoutFlutterPlatform {
     final version = await methodChannel.invokeMethod<String>('showPaymentMethods');
     return version;
   }
+ @override
+  MethodChannel getMethodChannel() {
+    return methodChannel;
+  }
+  @override
+  setTwoCheckCredentials(String secretKey, String merchantKey) {
+    final Map<String, dynamic> arguments = {
+      'arg1': secretKey,
+      'arg2': merchantKey,
+    };
+     methodChannel.invokeMethod<String>('setTwoCheckCredentials',arguments);
+  }
 }

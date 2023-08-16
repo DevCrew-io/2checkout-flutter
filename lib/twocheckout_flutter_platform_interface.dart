@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
 import 'twocheckout_flutter_method_channel.dart';
@@ -22,8 +23,13 @@ abstract class TwocheckoutFlutterPlatform extends PlatformInterface {
     PlatformInterface.verifyToken(instance, _token);
     _instance = instance;
   }
-
   Future<String?> showPaymentMethods() {
     throw UnimplementedError('showPaymentMethods() has not been implemented.');
+  }
+  MethodChannel getMethodChannel() {
+    throw UnimplementedError('getMethodChannel() has not been implemented.');
+  }
+  setTwoCheckCredentials(String secretKey,String merchantKey){
+    throw UnimplementedError('setTwoCheckCredentials() has not been implemented.');
   }
 }
