@@ -3,9 +3,12 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:twocheckout_flutter/twocheckout_flutter.dart';
-
+final _twoCheckoutFlutterPlugin = TwocheckoutFlutter();
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  _twoCheckoutFlutterPlugin.setTwoCheckoutCredentials("secretKey", "merchantKey");
   runApp(const MyApp());
+
 }
 
 class MyApp extends StatefulWidget {
@@ -42,6 +45,9 @@ class _MyAppState extends State<MyApp> {
               "T-shirt  10 USD",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [Text("data")],),
             const Text(
                 "A bright and sunny 360° illustration of San Francisco wrapped around this American Apparel t-shirt. This tee, popular at the Googleplex in Mountain View, CA is now available just for you!\n\nAvailable in Aqua with the Google Now logo screen printed in Gray across chest."),
             ElevatedButton(onPressed: () {
