@@ -1,3 +1,9 @@
+//
+//  twocheckout_flutter_method_channel.dart
+//  com.twocheckout.twocheckout_flutter
+//
+//  Copyright © 2023 DevCrew I/O
+//
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 

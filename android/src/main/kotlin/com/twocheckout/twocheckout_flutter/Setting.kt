@@ -1,3 +1,9 @@
+//
+//  TwocheckoutFlutterPlugin.kt
+//  com.twocheckout.twocheckout_flutter
+//
+//  Copyright © 2023 DevCrew I/O
+//
 package com.twocheckout.twocheckout_flutter
 
 class Setting {

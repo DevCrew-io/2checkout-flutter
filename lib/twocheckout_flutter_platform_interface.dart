@@ -1,3 +1,9 @@
+//
+//  twocheckout_flutter_platform_interface.dart
+//  com.twocheckout.twocheckout_flutter
+//
+//  Copyright © 2023 DevCrew I/O
+//
 import 'package:flutter/services.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 
