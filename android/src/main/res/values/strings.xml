@@ -86,4 +86,13 @@
 
     <string name="klarna_authorize_label" translatable="false">Authorize</string>
     <string name="klarna_finalize_label" translatable="false">Finalize</string>
+    <string name="customer_label" translatable="false">Customer</string>
+    <string name="amount_text" translatable="false">Amount</string>
+    <string name="reference_label" translatable="false">Reference</string>
+    <string name="back_to_store" translatable="false">Continue back to store</string>
+    <string name="company_message" translatable="false">Secure payments provided by Verifone</string>
+    <string name="user_message_text" translatable="false">Thank you for your payment</string>
+
+
+
 </resources>
