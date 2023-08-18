@@ -43,7 +43,6 @@ class _MyAppState extends State<MyApp> {
         String title = call.arguments['title'];
         String message = call.arguments['message'];
         showMyDialog(title, message);
-        progressDialogue(context);
       }
     });
   }

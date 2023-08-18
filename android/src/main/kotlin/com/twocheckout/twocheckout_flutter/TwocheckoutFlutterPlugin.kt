@@ -80,8 +80,7 @@ class TwocheckoutFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware 
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
     when (call.method) {
         "showPaymentMethods" -> {
-         // showPaymentOptions(context)
-          showNativeAlert("sdfsd","sdfsdf")
+          showPaymentOptions(context)
         }
         "setTwoCheckCredentials" -> {
           val arguments: Map<String, Any>? = call.arguments()
