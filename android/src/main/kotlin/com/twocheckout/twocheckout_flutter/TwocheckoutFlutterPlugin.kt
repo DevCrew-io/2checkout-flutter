@@ -1,20 +1,27 @@
 package com.twocheckout.twocheckout_flutter
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.ProgressDialog
 import android.content.Context
+import android.content.Intent
 import android.graphics.Typeface
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.NonNull
+import androidx.annotation.Nullable
+import androidx.core.content.ContextCompat.startActivity
 import androidx.core.content.res.ResourcesCompat
 import com.twocheckout.twocheckout_flutter.datapack.FormUICustomizationData
 import com.twocheckout.twocheckout_flutter.datapack.PaymentConfigurationData
 import com.twocheckout.twocheckout_flutter.http.CheckOrderStatus
 import com.twocheckout.twocheckout_flutter.http.HttpAuthenticationAPI
 import com.twocheckout.twocheckout_flutter.http.OrdersCardPaymentAPI
+import com.twocheckout.twocheckout_flutter.payments.card.ThreedsAuthForm
 import com.twocheckout.twocheckout_flutter.payments.card.ThreedsManager
 import com.twocheckout.twocheckout_flutter.payments.paypal.PaypalStarter
 import com.twocheckout.twocheckout_flutter.screens.TwoCheckoutPaymentForm
@@ -30,7 +37,7 @@ import java.util.*
 
 
 /** TwocheckoutFlutterPlugin */
-class TwocheckoutFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
+class TwocheckoutFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware {
   /// The MethodChannel that will the communication between Flutter and native Android
   ///
   /// This local reference serves to register the plugin with the Flutter Engine and unregister it
@@ -41,60 +48,18 @@ class TwocheckoutFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
   @Volatile private lateinit var progressDialog: ProgressDialog
   private var transactionRefNo =""
   //private val threedsReceiver = createPaymentsReceiver()
+  private val itemPrice = 0.01
   companion object{
     const val keyMerchantSecret = "merchant_secret_key"
     const val keyMerchantCode = "merchant_code"
-    const val keySaveBackgroundColor="pref_background_color"
-    const val keySaveInputTextColor="pref_input_text_color"
-    const val keySaveTextFieldsColor="pref_text_fields_color"
-    const val keySaveHintColor="pref_hint_color"
-    const val keySavePayBtnColor="pref_pay_btn_color"
-    const val keySaveTitleColor="pref_title_color"
     const val keyCardPaymentsUrl="card_payments_url"
     var currencyTV = "EUR"
    // private val paypalReceiver = createPaypalReceiver()
-    fun saveShowCard(ctx:Context,showCard:Boolean) {
-      val sp = ctx.getSharedPreferences("checkout_data", Context.MODE_PRIVATE)
-      sp.edit().putBoolean("key_store_show_card",showCard).apply()
-    }
 
-    fun getShowCard(ctx:Context):Boolean {
-      val sharedPref = ctx.getSharedPreferences("checkout_data", Context.MODE_PRIVATE)
-      return sharedPref.getBoolean("key_store_show_card",false)
-    }
-
-    fun saveShowPaypal(ctx:Context,showPaypal:Boolean) {
-      val sp = ctx.getSharedPreferences("checkout_data", Context.MODE_PRIVATE)
-      sp.edit().putBoolean("key_store_show_paypal",showPaypal).apply()
-    }
-
-    fun getShowPaypal(ctx:Context):Boolean {
-      val sharedPref = ctx.getSharedPreferences("checkout_data", Context.MODE_PRIVATE)
-      return sharedPref.getBoolean("key_store_show_paypal",false)
-    }
     fun getCardPaymentsUrl(ctx:Context):String {
       val sharedPref = ctx.getSharedPreferences("payment_settings_data", Context.MODE_PRIVATE)
       return sharedPref.getString(keyCardPaymentsUrl,"")?:""
     }
-
-    fun getMerchantSecretKey(ctx:Context):String {
-      val sharedPref = ctx.getSharedPreferences("payment_settings_data", Context.MODE_PRIVATE)
-      return sharedPref.getString(keyMerchantSecret,"")?:""
-    }
-
-    fun getMerchantCode(ctx:Context):String {
-      val sharedPref = ctx.getSharedPreferences("payment_settings_data", Context.MODE_PRIVATE)
-      return sharedPref.getString(keyMerchantCode,"")?:""
-    }
-    fun getStoredFont(ctx:Context):String {
-      val sharedPref = ctx.getSharedPreferences("checkout_data", Context.MODE_PRIVATE)
-      return sharedPref.getString("key_store_font","")?:""
-    }
-    fun getStoredLanguage(ctx:Context):String {
-      val sharedPref = ctx.getSharedPreferences("checkout_data", Context.MODE_PRIVATE)
-      return sharedPref.getString("key_store_lang","")?:""
-    }
-
   }
 
   override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
@@ -109,8 +74,8 @@ class TwocheckoutFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
   override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
     when (call.method) {
         "showPaymentMethods" -> {
-          showPaymentOptions(context)
-          channel.invokeMethod("showLoading", "Message from android");
+         // showPaymentOptions(context)
+          showNativeAlert("sdfsd","sdfsdf")
         }
         "setTwoCheckCredentials" -> {
           val arguments: Map<String, Any>? = call.arguments()
@@ -124,7 +89,12 @@ class TwocheckoutFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
         }
     }
   }
-
+  private fun showNativeAlert(title: String, msg: String) {
+    val arguments = hashMapOf<String, String>()
+    arguments["title"] = title
+    arguments["message"] = msg
+    channel.invokeMethod("showFlutterAlert", arguments)
+  }
   override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
     channel.setMethodCallHandler(null)
   }
@@ -143,6 +113,19 @@ class TwocheckoutFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
     override fun onDetachedFromActivityForConfigChanges() {
       TODO("Not yet implemented")
     }
+
+/*  fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    if (requestCode == 123) { // Make sure to match the request code
+      if (resultCode == Activity.RESULT_OK) {
+        val refNO = data?.getStringExtra(ThreedsManager.keyRefNO)?:""
+        if (refNO.isNotEmpty()){
+            launchOrderStatusCheck(refNO)
+        } else {
+          Toast.makeText(context," Card transaction failed",Toast.LENGTH_LONG).show()
+        }
+      }
+    }
+  }*/
   private fun showPaymentOptions( context: Context) {
     val payOptionsList = ArrayList<String>(2)
     payOptionsList.add(TwoCheckoutPaymentOptions.paymentOptionCard)
@@ -165,7 +148,7 @@ class TwocheckoutFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
       //    Toast.makeText(context,"Paypal selected",Toast.LENGTH_LONG).show()
     } else if (payMethod == TwoCheckoutPaymentOptions.paymentOptionCard) {
           Toast.makeText(context,"Card selected",Toast.LENGTH_LONG).show()
-      gotoCardFormPayment(getMerchantCode(context))
+      gotoCardFormPayment(Setting.merchantCode)
     }
   }
 
@@ -232,18 +215,17 @@ class TwocheckoutFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
   }
 */
   private fun showLoadingSpinner() {
-    Handler(Looper.getMainLooper()).post(Runnable {
+   /* Handler(Looper.getMainLooper()).post(Runnable {
       progressDialog.setTitle("Processing transaction...")
       progressDialog.setCancelable(true)
-      progressDialog.show()})
+      progressDialog.show()})*/
 
   }
 
   private fun onCreditCardInput(cardPaymentToken:String) {
     if (cardPaymentToken.isEmpty()){
       progressDialog.dismiss()
-      Toast.makeText(context," Get token failed",Toast.LENGTH_LONG).show()
-
+      showNativeAlert("Get token failed","Card transaction failed,")
      // ErrorDisplayDialog.ErrorDisplayDialog.newInstance("Card transaction failed","Get token failed").show(supportFragmentManager,"error")
       return
     }
@@ -261,46 +243,38 @@ class TwocheckoutFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
     }
   }
 
-  private fun onCardPaymentComplete(result:String) {
+  private fun onCardPaymentComplete(result: String) {
     progressDialog.dismiss()
-    if(result.isEmpty()){
-      Log.d("Card payment", "onCardPaymentComplete:$result")
-
-     // ErrorDisplayDialog.newInstance("Card transaction failed","unknown error").show(supportFragmentManager,"error")
+    if (result.isEmpty()) {
+      showNativeAlert("Card payment","Card transaction failed")
       return
     }
     val threedsResult = getThreedsUrl(result)
 
-    if (threedsResult.isNotEmpty()){
+    if (threedsResult.isNotEmpty()) {
       startThreedsAuth(threedsResult)
       return
     }
     var transactionStatus = ""
-    var reference =""
-    try{
+    var reference = ""
+    try {
       val resultJson = JSONObject(result)
       transactionStatus = resultJson.getString("Status")
-      reference = resultJson.getString("RefNo")}
-    catch (e:java.lang.Exception) {
-      Log.d("Card Transaction", "Card transaction failed:$result")
-
-    //  Toast.makeText(context," Card transaction failed",Toast.LENGTH_LONG).show()
-
-   //   ErrorDisplayDialog.newInstance("Card transaction failed","unknown error").show(supportFragmentManager,"error")
+      reference = resultJson.getString("RefNo")
+    } catch (e: java.lang.Exception) {
+      showNativeAlert("Card Transaction","Card transaction failed")
       return
     }
-    if (transactionStatus=="AUTHRECEIVED"){
-      Toast.makeText(context," gotoPaymentDoneScreen",Toast.LENGTH_LONG).show()
-   /*   gotoPaymentDoneScreen(reference,PaymentFlowDone.TransactionType.typeCreditCard.name,""+itemPrice,"John Doe",
-        currencyTV)*/
+    if (transactionStatus == "AUTHRECEIVED") {
+         gotoPaymentDoneScreen(reference,PaymentFlowDone.TransactionType.typeCreditCard.name,""+itemPrice,"John Doe",
+           currencyTV)
     } else {
-      Toast.makeText(context," Card transaction status",Toast.LENGTH_LONG).show()
-
-      //ErrorDisplayDialog.newInstance("Card transaction status",transactionStatus).show(supportFragmentManager,"error")
+      Toast.makeText(context, " Card transaction status", Toast.LENGTH_LONG).show()
+      showNativeAlert("Card transaction status",transactionStatus)
     }
     transactionRefNo = ""
     //saveRefNO()
-    Toast.makeText(context," saveRefNO",Toast.LENGTH_LONG).show()
+    Toast.makeText(context, " saveRefNO", Toast.LENGTH_LONG).show()
 
   }
 
@@ -323,8 +297,9 @@ class TwocheckoutFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
     if(threedsUrl.isEmpty()){
       progressDialog.dismiss()
     }
-    val threedsScreen = ThreedsManager(context,threedsUrl)
-  //  threedsScreen.displayThreedsConfirmation(threedsReceiver)
+    val temp = Intent(context, ThreedsAuthForm::class.java)
+    temp.putExtra(ThreedsManager.keyThreedsURL,threedsUrl)
+    activity.startActivityForResult(temp,ThreedsManager.threedsResultCode)
   }
 
  /* private fun createPaymentsReceiver(): ActivityResultLauncher<Intent> {
@@ -355,9 +330,7 @@ class TwocheckoutFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
   }*/
 
   private fun startPaypalFlow(){
-    Log.d("PaypalFlow", "startPaypalFlow")
     val ordersPaypalPayment = OrdersCardPaymentAPI(currencyTV,true,::onPaypalFlowComplete)
-
     val httpAuthAPI = HttpAuthenticationAPI()
     httpAuthAPI.secretKey = Setting.secretKey
     httpAuthAPI.merchantCode = Setting.merchantCode
@@ -368,20 +341,15 @@ class TwocheckoutFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
     } catch (e:Exception) {
       progressDialog.dismiss()
       Toast.makeText(context,"Paypal error",Toast.LENGTH_LONG).show()
-
-      // ErrorDisplayDialog.newInstance("Paypal error","Invalid key").show(supportFragmentManager,"error")
+      showNativeAlert("Paypal error","Invalid key")
       e.printStackTrace()
     }
   }
 
   private fun onPaypalFlowComplete(result:String){
     progressDialog.dismiss()
-    Log.d("PaypalFlow", "onPaypalFlowComplete:$result")
-
     if(result.isEmpty()){
-     // Toast.makeText(context,"Card transaction failed",Toast.LENGTH_LONG).show()
-
-    //  ErrorDisplayDialog.newInstance("Card transaction failed","unknown error").show(supportFragmentManager,"error")
+      showNativeAlert("Card transaction failed","unknown error")
       return
     }
     val redirectURL = getPaypalUrl(result)
@@ -397,26 +365,19 @@ class TwocheckoutFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
       transactionStatus = resultJson.getString("Status")
       reference = resultJson.getString("RefNo")}
     catch (e:java.lang.Exception) {
-      //Toast.makeText(context,"Card transaction failed",Toast.LENGTH_LONG).show()
-      Log.d("PaypalFlow Exception", "Card transaction failed")
-      //  ErrorDisplayDialog.newInstance("Card transaction failed","unknown error").show(supportFragmentManager,"error")
+      showNativeAlert("Card transaction failed","unknown error")
+
       return
     }
     if (transactionStatus=="AUTHRECEIVED"){
-     // Toast.makeText(context,"gotoPaymentDoneScreen",Toast.LENGTH_LONG).show()
-      Log.d("PaypalFlow ", "AUTHRECEIVED")
-      /*  gotoPaymentDoneScreen(reference,PaymentFlowDone.TransactionType.typeCreditCard.name,""+itemPrice,"John Doe",
-          currencyTV)*/
+        gotoPaymentDoneScreen(reference,PaymentFlowDone.TransactionType.typeCreditCard.name,""+itemPrice,"John Doe",
+          currencyTV)
     } else {
-    //  Toast.makeText(context,"Card transaction status $transactionStatus",Toast.LENGTH_LONG).show()
       Log.d("PaypalFlow ", "Card transaction status")
-
-    //  ErrorDisplayDialog.newInstance("Card transaction status",transactionStatus).show(supportFragmentManager,"error")
     }
     transactionRefNo = ""
-    //saveRefNO()
-   // Toast.makeText(context,"saveRefNO",Toast.LENGTH_LONG).show()
     Log.d("PaypalFlow ", "saveRefNO")
+    showNativeAlert("Card transaction status",transactionStatus)
 
   }
 
@@ -486,34 +447,27 @@ class TwocheckoutFlutterPlugin: FlutterPlugin, MethodCallHandler, ActivityAware{
       val statusResult = statusObj.getString("Status")
       if (statusResult == "AUTHRECEIVED"){
         val referenceNO = statusObj.getString("RefNo")
-       /* gotoPaymentDoneScreen(referenceNO,PaymentFlowDone.TransactionType.typeCreditCard.name,""+itemPrice,"John Doe",
-          currencyTV)*/
+        gotoPaymentDoneScreen(referenceNO,PaymentFlowDone.TransactionType.typeCreditCard.name,""+itemPrice,"John Doe",
+          currencyTV)
 
         Toast.makeText(context,"gotoPaymentDoneScreen",Toast.LENGTH_LONG).show()
 
       } else {
-        Toast.makeText(context,"Card transaction failed,unknown error",Toast.LENGTH_LONG).show()
-
-      //  ErrorDisplayDialog.newInstance("Card transaction failed","unknown error").show(supportFragmentManager,"error")
+        showNativeAlert("Card transaction failed","unknown error")
       }
     } catch (e:Exception){
       e.printStackTrace()
-      Toast.makeText(context,"Card transaction failed",Toast.LENGTH_LONG).show()
-
-     // ErrorDisplayDialog.newInstance("Card transaction failed","unknown error").show(supportFragmentManager,"error")
+      showNativeAlert("Card transaction failed","unknown error")
     }
     transactionRefNo = ""
-    Toast.makeText(context,"saveRefNO",Toast.LENGTH_LONG).show()
-
-   // saveRefNO()
   }
- /* private fun gotoPaymentDoneScreen(reference: String,transactionType:String ,amount: String,customerParam:String,currencyParam:String) {
-    val paymentDone = Intent(this, PaymentFlowDone::class.java)
+  private fun gotoPaymentDoneScreen(reference: String,transactionType:String ,amount: String,customerParam:String,currencyParam:String) {
+    val paymentDone = Intent(context, PaymentFlowDone::class.java)
     paymentDone.putExtra(PaymentFlowDone.keyPayerName, customerParam)
     paymentDone.putExtra(PaymentFlowDone.keyTransactionReference, reference)
     paymentDone.putExtra(PaymentFlowDone.keyTransactionAmount, amount)
     paymentDone.putExtra(PaymentFlowDone.keyTransactionCurrency,currencyParam)
     paymentDone.putExtra(PaymentFlowDone.keyTransactionType,transactionType)
-    startActivity(paymentDone)
-  }*/
+    activity.startActivity(paymentDone)
+  }
 }
