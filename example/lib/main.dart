@@ -9,6 +9,7 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:twocheckout_flutter/twocheckout_flutter.dart';
+import 'package:twocheckout_flutter_example/payment_flow_done.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,7 +33,7 @@ class _MyAppState extends State<MyApp> {
     /// Set 2Checkout credentials
 
     _twoCheckoutFlutterPlugin.setTwoCheckoutCredentials(
-        "secretKey", "merchantKey");
+        "GksS#rw&n_X^gv3xLBNU", "254558257678");
 
     /// Set method call handler to handle calls from Native side
 
@@ -43,12 +44,24 @@ class _MyAppState extends State<MyApp> {
         String title = call.arguments['title'];
         String message = call.arguments['message'];
         showMyDialog(title, message);
+      } else if (call.method == 'dismissProgressbar') {
+        dismissProgressBar();
+      } else if (call.method == 'showLoadingSpinner') {
+        progressDialogue(context);
+      } else if (call.method == 'PaymentFlowDone') {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (BuildContext context) => const PaymentFlowDoneScreen(
+                      label: 'Customer label',
+                      amount: '10 USD',
+                      ref: 'ref',
+                    )));
       }
     });
   }
 
   Future<void> showPaymentMethods() async {
-
     /// Show payment methods using the TwocheckoutFlutter plugin
 
     await _twoCheckoutFlutterPlugin.showPaymentMethods();
@@ -98,6 +111,10 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
+  dismissProgressBar() {
+    Navigator.of(context, rootNavigator: true).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -107,7 +124,7 @@ class _MyAppState extends State<MyApp> {
         ),
         body: Column(
           children: [
-            Image.asset("assets/products/shirt.jpg"),
+            Image.asset("assets/images/shirt.jpg"),
             const Text(
               "T-shirt  10 USD",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
