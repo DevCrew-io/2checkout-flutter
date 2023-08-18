@@ -11,11 +11,8 @@ import 'package:flutter/services.dart';
 import 'package:twocheckout_flutter/twocheckout_flutter.dart';
 
 void main() {
-
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MaterialApp(
-      home:MyApp()));
-
+  runApp(const MaterialApp(home: MyApp()));
 }
 
 class MyApp extends StatefulWidget {
@@ -26,45 +23,51 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  String _platformVersion = 'Unknown';
-  final _twocheckoutFlutterPlugin = TwocheckoutFlutter();
   final _twoCheckoutFlutterPlugin = TwocheckoutFlutter();
+
   @override
   void initState() {
     super.initState();
-    _twoCheckoutFlutterPlugin.setTwoCheckoutCredentials("secretKey", "merchantKey");
-    _twoCheckoutFlutterPlugin.getMethodChannel().setMethodCallHandler((MethodCall call) async {
+
+    /// Set 2Checkout credentials
+
+    _twoCheckoutFlutterPlugin.setTwoCheckoutCredentials(
+        "secretKey", "merchantKey");
+
+    /// Set method call handler to handle calls from Native side
+
+    _twoCheckoutFlutterPlugin
+        .getMethodChannel()
+        .setMethodCallHandler((MethodCall call) async {
       if (call.method == 'showFlutterAlert') {
         String title = call.arguments['title'];
         String message = call.arguments['message'];
-        print("Flutter receive a ");
-        //_showMyDialog();
+        showMyDialog(title, message);
         progressDialogue(context);
       }
     });
   }
 
   Future<void> showPaymentMethods() async {
-    await _twocheckoutFlutterPlugin.showPaymentMethods() ;
+
+    /// Show payment methods using the TwocheckoutFlutter plugin
+
+    await _twoCheckoutFlutterPlugin.showPaymentMethods();
   }
-  Future<void> _showMyDialog() async {
+
+  /// Dialog for showing Alert messages sent from the Native side
+
+  Future<void> showMyDialog(String title, String detail) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: const Text('AlertDialog Title'),
-          content: const SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text('This is a demo alert dialog.'),
-                Text('Would you like to approve of this message?'),
-              ],
-            ),
-          ),
+          title: Text(title),
+          content: Text(detail),
           actions: <Widget>[
             TextButton(
-              child: const Text('Approve'),
+              child: const Text('Cancel'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -75,16 +78,14 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
+  /// Progress Bar for waiting for a response
 
   progressDialogue(BuildContext context) {
-    //set up the AlertDialog
-    AlertDialog alert = AlertDialog(
+    AlertDialog alert = const AlertDialog(
       backgroundColor: Colors.transparent,
       elevation: 0,
-      content: Container(
-        child: Center(
-          child: CircularProgressIndicator(),
-        ),
+      content: Center(
+        child: CircularProgressIndicator(),
       ),
     );
     showDialog(
@@ -97,6 +98,7 @@ class _MyAppState extends State<MyApp> {
       },
     );
   }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -113,12 +115,15 @@ class _MyAppState extends State<MyApp> {
             ),
             const Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [Text("data")],),
+              children: [Text("data")],
+            ),
             const Text(
                 "A bright and sunny 360° illustration of San Francisco wrapped around this American Apparel t-shirt. This tee, popular at the Googleplex in Mountain View, CA is now available just for you!\n\nAvailable in Aqua with the Google Now logo screen printed in Gray across chest."),
-            ElevatedButton(onPressed: () {
-              showPaymentMethods();
-            }, child: const Text("Payment"))
+            ElevatedButton(
+                onPressed: () {
+                  showPaymentMethods();
+                },
+                child: const Text("Payment"))
           ],
         ),
       ),
