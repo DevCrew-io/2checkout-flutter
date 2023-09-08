@@ -12,6 +12,9 @@ import android.content.Intent
 import android.graphics.Typeface
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.NonNull
 import androidx.core.content.res.ResourcesCompat
 import com.twocheckout.twocheckout_flutter.datapack.FormUICustomizationData
@@ -21,6 +24,7 @@ import com.twocheckout.twocheckout_flutter.http.HttpAuthenticationAPI
 import com.twocheckout.twocheckout_flutter.http.OrdersCardPaymentAPI
 import com.twocheckout.twocheckout_flutter.payments.card.ThreedsAuthForm
 import com.twocheckout.twocheckout_flutter.payments.card.ThreedsManager
+import com.twocheckout.twocheckout_flutter.payments.card.ThreedsManager.Companion.threedsResultCode
 import com.twocheckout.twocheckout_flutter.payments.paypal.PaypalStarter
 import com.twocheckout.twocheckout_flutter.screens.TwoCheckoutPaymentForm
 import com.twocheckout.twocheckout_flutter.screens.TwoCheckoutPaymentOptions
@@ -30,12 +34,14 @@ import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
+import io.flutter.plugin.common.PluginRegistry
+import io.flutter.plugin.common.PluginRegistry.Registrar
 import org.json.JSONObject
 import java.util.*
 
 
 /** TwocheckoutFlutterPlugin */
-class TwocheckoutFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
+class TwocheckoutFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, PluginRegistry.ActivityResultListener {
     /// The MethodChannel that will the communication between Flutter and native Android
     ///
     /// This local reference serves to register the plugin with the Flutter Engine and unregister it
@@ -44,8 +50,6 @@ class TwocheckoutFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
     private lateinit var context: Context
     private lateinit var activity: Activity
     private var transactionRefNo = ""
-
-    //private val threedsReceiver = createPaymentsReceiver()
     private val itemPrice = 0.01
 
     companion object {
@@ -87,8 +91,8 @@ class TwocheckoutFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: MethodChannel.Result) {
         when (call.method) {
             SHOW_PAYMENT_METHODS -> {
-                gotoPaymentDoneScreen("", "", "", "", "")
-                // showPaymentOptions(context)
+               // gotoPaymentDoneScreen("", "", "", "", "")
+                 showPaymentOptions(context)
             }
             SET_2CHECKOUT_CREDENTIALS -> {
                 val arguments: Map<String, Any>? = call.arguments()
@@ -102,7 +106,17 @@ class TwocheckoutFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
             }
         }
     }
-
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
+        if (requestCode == threedsResultCode) { // Make sure to match the request code
+            val refNO = data?.getStringExtra(ThreedsManager.keyRefNO) ?: ""
+            if (refNO.isNotEmpty()) {
+                launchOrderStatusCheck(refNO)
+            } else {
+                Toast.makeText(context, " Card transaction failed", Toast.LENGTH_LONG).show()
+            }
+        }
+        return false
+    }
     private fun showNativeAlert(title: String, msg: String) {
         val arguments = hashMapOf<String, String>()
         arguments["title"] = title
@@ -115,7 +129,8 @@ class TwocheckoutFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
     }
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-        activity = binding.activity;
+        binding.addActivityResultListener(this);
+        activity = binding.activity
     }
 
     override fun onDetachedFromActivity() {
@@ -130,18 +145,6 @@ class TwocheckoutFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
         TODO("Not yet implemented")
     }
 
-    /*  fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == 123) { // Make sure to match the request code
-          if (resultCode == Activity.RESULT_OK) {
-            val refNO = data?.getStringExtra(ThreedsManager.keyRefNO)?:""
-            if (refNO.isNotEmpty()){
-                launchOrderStatusCheck(refNO)
-            } else {
-              Toast.makeText(context," Card transaction failed",Toast.LENGTH_LONG).show()
-            }
-          }
-        }
-      }*/
     private fun showPaymentOptions(context: Context) {
         val payOptionsList = ArrayList<String>(2)
         payOptionsList.add(TwoCheckoutPaymentOptions.paymentOptionCard)
@@ -153,7 +156,7 @@ class TwocheckoutFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
         }
 
         val paymentOptionsSheet =
-            TwoCheckoutPaymentOptions(activity, payOptionsList, ::onPayMethodSelected)
+            TwoCheckoutPaymentOptions(activity , payOptionsList, ::onPayMethodSelected)
         paymentOptionsSheet.showPaymentOptionList()
     }
 
@@ -163,7 +166,8 @@ class TwocheckoutFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
             startPaypalFlow()
         } else if (payMethod == TwoCheckoutPaymentOptions.paymentOptionCard) {
             //  channel.invokeMethod(SHOW_LOADING_SPINNER,null)
-            gotoCardFormPayment(merchantCode)
+          //  gotoCardFormPayment(merchantCode)
+            startThreedsAuth("https://www.example.com/?avng8apitoken=your_token_value_here")
         }
     }
 
@@ -234,7 +238,7 @@ class TwocheckoutFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
     }
 
     private fun dismissLoadingSpinner() {
-        channel.invokeMethod(DISMISS_LOADING_SPINNNER, null)
+      //  channel.invokeMethod(DISMISS_LOADING_SPINNNER, null)
     }
 
     private fun onCreditCardInput(cardPaymentToken: String) {
@@ -257,6 +261,7 @@ class TwocheckoutFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
         }
     }
 
+    // sample function for retrieving 2CO card order payment result
     private fun onCardPaymentComplete(result: String) {
         dismissLoadingSpinner()
         if (result.isEmpty()) {
@@ -318,30 +323,8 @@ class TwocheckoutFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
         }
         val temp = Intent(context, ThreedsAuthForm::class.java)
         temp.putExtra(ThreedsManager.keyThreedsURL, threedsUrl)
-        activity.startActivityForResult(temp, ThreedsManager.threedsResultCode)
+        activity.startActivityForResult(temp, threedsResultCode)
     }
-
-    /* private fun createPaymentsReceiver(): ActivityResultLauncher<Intent> {
-       val actResLauncher: ActivityResultLauncher<Intent> =
-         registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-             result: ActivityResult ->
-           if (result.resultCode == ThreedsManager.threedsResultCode) {
-             if (result.data!=null) {
-               result.data?.let {
-                 val refNO = it.getStringExtra(ThreedsManager.keyRefNO)?:""
-                 if (refNO.isNotEmpty()){
-                 //  launchOrderStatusCheck(refNO)
-                 } else {
-                   Toast.makeText(context," Card transaction failed",Toast.LENGTH_LONG).show()
-
-                  // ErrorDisplayDialog.newInstance("Card transaction failed","unknown error").show(supportFragmentManager,"error")
-                 }
-               }
-             }
-           }
-         }
-       return actResLauncher
-     }*/
 
     /* private fun saveRefNO(){
        val sharedPref = getSharedPreferences("main_screen", Context.MODE_PRIVATE)

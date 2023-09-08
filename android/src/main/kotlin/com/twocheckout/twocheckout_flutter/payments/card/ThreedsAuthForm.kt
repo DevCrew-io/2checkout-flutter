@@ -3,6 +3,7 @@ package com.twocheckout.twocheckout_flutter.payments.card
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.webkit.WebView
 import com.twocheckout.twocheckout_flutter.payments.card.ThreedsManager.Companion.keyRefNO
 import com.twocheckout.twocheckout_flutter.R
@@ -29,13 +30,13 @@ internal class ThreedsAuthForm : AppCompatActivity() {
 
     private fun onThreedsFlowDone(result:MutableMap<String, String>){
         for (idx in result){
-            if (idx.key == "REFNO") {
+        //    if (idx.key == "REFNO") {
                 val resultData = Intent()
                 resultData.putExtra(keyRefNO,idx.value)
                 setResult(threedsResultCode,resultData)
                 finish()
                 break
-            }
+          //  }
         }
     }
 

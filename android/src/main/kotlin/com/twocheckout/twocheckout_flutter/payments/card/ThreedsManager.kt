@@ -14,7 +14,7 @@ class ThreedsManager(ctx: Context, displayURL: String) {
     companion object{
         const val keyThreedsURL = "threeds_url"
         const val keyRefNO = "ref_no_value"
-        const val threedsResultCode = 101
+        const val threedsResultCode = 4323
 
     }
 

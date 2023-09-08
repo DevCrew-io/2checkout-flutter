@@ -2,6 +2,7 @@ package com.twocheckout.twocheckout_flutter.payments.card
 
 
 import android.graphics.Bitmap
+import android.util.Log
 
 import android.webkit.WebView
 import android.webkit.WebViewClient
@@ -14,10 +15,11 @@ internal class ThreedsWebClient(onConfirmationDone: (MutableMap<String, String>)
     override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
         super.onPageStarted(view, url, favicon)
         val sourceURL = url.toString()
-        if (sourceURL.isNotEmpty()&&sourceURL.contains("REFNO")) {
+        sendConfirmationResult(parseQueryParams(URL(url)))
+     /*   if (sourceURL.isNotEmpty()&&sourceURL.contains("REFNO")) {
             sendConfirmationResult(parseQueryParams(URL(url)))
             return
-        }
+        }*/
     }
 
     override fun onLoadResource(view: WebView?, url: String?) {
