@@ -7,7 +7,8 @@
 
 The 2Checkout Flutter SDK allows you to build delightful payment experiences in your native Android (for iOS work is in progress). We provide powerful and customizable UI screens, widget, and method channels for native functions access that can be used out-of-the-box to collect your users' payment details.
 
-![Alt text](https://github.com/DevCrew-io/2checkout-flutter/blob/readme/screenshots/1.png)
+<img src="https://github.com/DevCrew-io/2checkout-flutter/blob/readme/screenshots/1.png" alt="Alt Text" width="300">
+
 
 ## Features
 
