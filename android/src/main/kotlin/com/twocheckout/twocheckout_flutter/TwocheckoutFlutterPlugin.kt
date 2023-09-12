@@ -26,6 +26,8 @@ import com.twocheckout.twocheckout_flutter.payments.card.ThreedsAuthForm
 import com.twocheckout.twocheckout_flutter.payments.card.ThreedsManager
 import com.twocheckout.twocheckout_flutter.payments.card.ThreedsManager.Companion.threedsResultCode
 import com.twocheckout.twocheckout_flutter.payments.paypal.PaypalStarter
+import com.twocheckout.twocheckout_flutter.payments.paypal.PaypalStarter.Companion.paypalResultCode
+import com.twocheckout.twocheckout_flutter.payments.paypal.PaypalWebScreen
 import com.twocheckout.twocheckout_flutter.screens.TwoCheckoutPaymentForm
 import com.twocheckout.twocheckout_flutter.screens.TwoCheckoutPaymentOptions
 import io.flutter.embedding.engine.plugins.FlutterPlugin
@@ -43,7 +45,6 @@ import java.util.*
 /** TwocheckoutFlutterPlugin */
 class TwocheckoutFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, PluginRegistry.ActivityResultListener {
     /// The MethodChannel that will the communication between Flutter and native Android
-    ///
     /// This local reference serves to register the plugin with the Flutter Engine and unregister it
     /// when the Flutter Engine is detached from the Activity
     private lateinit var channel: MethodChannel
@@ -57,8 +58,6 @@ class TwocheckoutFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
         const val keyMerchantCode = "merchant_code"
         const val keyCardPaymentsUrl = "card_payments_url"
         var currencyTV = "EUR"
-        // private val paypalReceiver = createPaypalReceiver()
-
         fun getCardPaymentsUrl(ctx: Context): String {
             val sharedPref = ctx.getSharedPreferences("payment_settings_data", Context.MODE_PRIVATE)
             return sharedPref.getString(keyCardPaymentsUrl, "") ?: ""
@@ -107,7 +106,7 @@ class TwocheckoutFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
         }
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
-        if (requestCode == threedsResultCode) { // Make sure to match the request code
+        if (requestCode == threedsResultCode || requestCode == paypalResultCode) { // Make sure to match the request code
             val refNO = data?.getStringExtra(ThreedsManager.keyRefNO) ?: ""
             if (refNO.isNotEmpty()) {
                 launchOrderStatusCheck(refNO)
@@ -166,8 +165,8 @@ class TwocheckoutFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
             startPaypalFlow()
         } else if (payMethod == TwoCheckoutPaymentOptions.paymentOptionCard) {
             //  channel.invokeMethod(SHOW_LOADING_SPINNER,null)
-          //  gotoCardFormPayment(merchantCode)
-            startThreedsAuth("https://www.example.com/?avng8apitoken=your_token_value_here")
+            gotoCardFormPayment(merchantCode)
+            //startThreedsAuth("https://www.example.com/?avng8apitoken=your_token_value_here")
         }
     }
 
@@ -234,11 +233,11 @@ class TwocheckoutFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
     }
   */
     private fun showLoadingSpinner() {
-        channel.invokeMethod(DISMISS_LOADING_SPINNNER, null)
+        channel.invokeMethod(SHOW_LOADING_SPINNER, null)
     }
 
     private fun dismissLoadingSpinner() {
-      //  channel.invokeMethod(DISMISS_LOADING_SPINNNER, null)
+        channel.invokeMethod(DISMISS_LOADING_SPINNNER, null)
     }
 
     private fun onCreditCardInput(cardPaymentToken: String) {
@@ -340,12 +339,14 @@ class TwocheckoutFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
             val headersTemp = httpAuthAPI.getHeaders()
             ordersPaypalPayment.authHeaders = headersTemp
             ordersPaypalPayment.launchAPI("")
+
         } catch (e: Exception) {
-            dismissLoadingSpinner()
+
             Toast.makeText(context, "Paypal error", Toast.LENGTH_LONG).show()
             showNativeAlert("Paypal error", "Invalid key")
             e.printStackTrace()
         }
+        dismissLoadingSpinner()
     }
 
     private fun onPaypalFlowComplete(result: String) {
@@ -355,7 +356,6 @@ class TwocheckoutFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
             return
         }
         val redirectURL = getPaypalUrl(result)
-
         if (redirectURL.isNotEmpty()) {
             startPaypalScreen(redirectURL)
             return
@@ -405,33 +405,12 @@ class TwocheckoutFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
         if (paypalUrl.isEmpty()) {
             dismissLoadingSpinner()
         }
-        val mPaypalStarter = PaypalStarter(context, paypalUrl)
-        // mPaypalStarter.displayPaypalScreen(paypalReceiver)
+
+        val temp = Intent(context, PaypalWebScreen::class.java)
+        temp.putExtra(PaypalStarter.keyPaypalURL, paypalUrl)
+        activity.startActivityForResult(temp, paypalResultCode)
+
     }
-
-    /* private fun createPaypalReceiver(): ActivityResultLauncher<Intent> {
-       val actResLauncher: ActivityResultLauncher<Intent> =
-         registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-             result: ActivityResult ->
-
-           if (result.resultCode == PaypalStarter.paypalResultCode) {
-             if (result.data!=null) {
-               result.data?.let {
-                 val refNO = it.getStringExtra(PaypalStarter.keyRefNO)?:""
-                 if (refNO.isNotEmpty()){
-                   launchOrderStatusCheck(refNO)
-                 } else {
-                   Toast.makeText(context,"Card transaction failed,unknown error",Toast.LENGTH_LONG).show()
-
-               //    ErrorDisplayDialog.newInstance("Card transaction failed","unknown error").show(supportFragmentManager,"error")
-                 }
-               }
-             }
-           }
-         }
-       return actResLauncher
-     }*/
-
 
     private fun launchOrderStatusCheck(authRefParam: String) {
         val checkOrderStatus = CheckOrderStatus(::onOrderCheckStatus)
