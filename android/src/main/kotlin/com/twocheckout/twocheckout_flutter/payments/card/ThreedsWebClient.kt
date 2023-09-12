@@ -15,11 +15,10 @@ internal class ThreedsWebClient(onConfirmationDone: (MutableMap<String, String>)
     override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
         super.onPageStarted(view, url, favicon)
         val sourceURL = url.toString()
-        sendConfirmationResult(parseQueryParams(URL(url)))
-     /*   if (sourceURL.isNotEmpty()&&sourceURL.contains("REFNO")) {
+        if (sourceURL.isNotEmpty()&&sourceURL.contains("REFNO")) {
             sendConfirmationResult(parseQueryParams(URL(url)))
             return
-        }*/
+        }
     }
 
     override fun onLoadResource(view: WebView?, url: String?) {
