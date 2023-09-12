@@ -4,11 +4,14 @@
 //
 //  Copyright © 2023 DevCrew I/O
 //
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:twocheckout_flutter/twocheckout_flutter.dart';
+import 'package:twocheckout_flutter_example/payment_flow_done.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,23 +35,45 @@ class _MyAppState extends State<MyApp> {
     /// Set 2Checkout credentials
 
     _twoCheckoutFlutterPlugin.setTwoCheckoutCredentials(
-        "secretKey", "merchantKey");
+        "secretKey", "merchant_key");
 
     /// Set method call handler to handle calls from Native side
 
     _twoCheckoutFlutterPlugin
         .getMethodChannel()
         .setMethodCallHandler((MethodCall call) async {
-      if (call.method == 'showFlutterAlert') {
-        String title = call.arguments['title'];
-        String message = call.arguments['message'];
-        showMyDialog(title, message);
+      switch (call.method) {
+        case 'showFlutterAlert':
+          String title = call.arguments['title'];
+          String message = call.arguments['message'];
+          showMyDialog(title, message);
+          break;
+        case 'dismissProgressbar':
+          dismissProgressBar();
+          break;
+        case 'showLoadingSpinner':
+          progressDialogue(context);
+          break;
+        case 'PaymentFlowDone':
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) => const PaymentFlowDoneScreen(
+                label: 'Customer label',
+                amount: '10 USD',
+                ref: 'ref',
+              ),
+            ),
+          );
+          break;
+        default:
+          // Handle an unknown method call or provide an error response.
+          break;
       }
     });
   }
 
   Future<void> showPaymentMethods() async {
-
     /// Show payment methods using the TwocheckoutFlutter plugin
 
     await _twoCheckoutFlutterPlugin.showPaymentMethods();
@@ -98,6 +123,11 @@ class _MyAppState extends State<MyApp> {
     );
   }
 
+  dismissProgressBar() {
+    log('Dismiss Progress bar in Flutter');
+    Navigator.of(context, rootNavigator: true).pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -107,7 +137,7 @@ class _MyAppState extends State<MyApp> {
         ),
         body: Column(
           children: [
-            Image.asset("assets/products/shirt.jpg"),
+            Image.asset("assets/images/shirt.jpg"),
             const Text(
               "T-shirt  10 USD",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),

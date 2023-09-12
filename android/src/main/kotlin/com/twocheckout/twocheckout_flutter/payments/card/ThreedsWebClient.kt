@@ -2,6 +2,7 @@ package com.twocheckout.twocheckout_flutter.payments.card
 
 
 import android.graphics.Bitmap
+import android.util.Log
 
 import android.webkit.WebView
 import android.webkit.WebViewClient

@@ -3,6 +3,7 @@ package com.twocheckout.twocheckout_flutter.payments.card
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.webkit.WebView
 import com.twocheckout.twocheckout_flutter.payments.card.ThreedsManager.Companion.keyRefNO
 import com.twocheckout.twocheckout_flutter.R
