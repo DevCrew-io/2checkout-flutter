@@ -68,38 +68,38 @@ _twoCheckoutFlutterPlugin.setTwoCheckoutCredentials(
 Customization of native code on the Flutter side makes it easier for Flutter developers to perform actions such as displaying alert dialogues, dismissing/loading spinners, and navigating to customized pages.
 
 ```dart
-_twoCheckoutFlutterPlugin
-.getMethodChannel()
-.setMethodCallHandler((MethodCall call) async {
-switch (call.method) {
-case 'showFlutterAlert':
-String title = call.arguments['title'];
-String message = call.arguments['message'];
-showMyDialog(title, message);
-break;
-case 'dismissProgressbar':
-dismissProgressBar();
-break;
-case 'showLoadingSpinner':
-progressDialogue(context);
-break;
-case 'PaymentFlowDone':
-Navigator.push(
-context,
-MaterialPageRoute(
-builder: (BuildContext context) => const PaymentFlowDoneScreen(
-label: 'Customer label',
-amount: '10 USD',
-ref: 'ref',
-),
-),
-);
-break;
-default:
-// Handle an unknown method call or provide an error response.
-break;
-}
-});
+    _twoCheckoutFlutterPlugin
+        .getMethodChannel()
+        .setMethodCallHandler((MethodCall call) async {
+      switch (call.method) {
+        case 'showFlutterAlert':
+          String title = call.arguments['title'];
+          String message = call.arguments['message'];
+          showMyDialog(title, message);
+          break;
+        case 'dismissProgressbar':
+          dismissProgressBar();
+          break;
+        case 'showLoadingSpinner':
+          progressDialogue(context);
+          break;
+        case 'PaymentFlowDone':
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) => const PaymentFlowDoneScreen(
+                label: 'Customer label',
+                amount: '10 USD',
+                ref: 'ref',
+              ),
+            ),
+          );
+          break;
+        default:
+          // Handle an unknown method call or provide an error response.
+          break;
+      }
+    });
 ```
 
 # Running the Example App
