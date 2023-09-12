@@ -4,6 +4,8 @@
 //
 //  Copyright © 2023 DevCrew I/O
 //
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -33,7 +35,7 @@ class _MyAppState extends State<MyApp> {
     /// Set 2Checkout credentials
 
     _twoCheckoutFlutterPlugin.setTwoCheckoutCredentials(
-        "GksS#rw&n_X^gv3xLBNU", "254558257678");
+        "secretKey", "merchant_key");
 
     /// Set method call handler to handle calls from Native side
 
@@ -112,6 +114,7 @@ class _MyAppState extends State<MyApp> {
   }
 
   dismissProgressBar() {
+    log('Dismiss Progress bar in Flutter');
     Navigator.of(context, rootNavigator: true).pop();
   }
 
