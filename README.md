@@ -12,7 +12,7 @@ The 2Checkout Flutter SDK allows you to build delightful payment experiences in 
 
 ## Features
 
-- **Simplified Security**: We make it simple for you to collect sensitive data such as credit card numbers and remain PCI compliant. This means the sensitive data is sent directly to 2Checkout (Now Verifone) instead of passing through your server. For more information, see our [Integration Security Guide](https://verifone.cloud/docs/2checkout/Documentation/06Integration_security).
+- **Simplified Security**: We make it simple for you to collect sensitive data such as credit card numbers and remain PCI compliant. This means the sensitive data is sent directly to 2Checkout (Now Verifone) instead of passing through your server. For more information, see our [Integration Security Guide](https://verifone.cloud/docs/2checkout/Documentation).
 - **Payment methods**: Accepting more payment methods helps your business expand its global reach and improve checkout conversion.
 - **SCA-Ready**: The SDK automatically performs native 3D Secure authentication if needed to comply with Strong Customer Authentication.
 - **Native UI**: We provide native screens and elements to securely collect payment details on Android and iOS.
