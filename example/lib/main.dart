@@ -42,23 +42,33 @@ class _MyAppState extends State<MyApp> {
     _twoCheckoutFlutterPlugin
         .getMethodChannel()
         .setMethodCallHandler((MethodCall call) async {
-      if (call.method == 'showFlutterAlert') {
-        String title = call.arguments['title'];
-        String message = call.arguments['message'];
-        showMyDialog(title, message);
-      } else if (call.method == 'dismissProgressbar') {
-        dismissProgressBar();
-      } else if (call.method == 'showLoadingSpinner') {
-        progressDialogue(context);
-      } else if (call.method == 'PaymentFlowDone') {
-        Navigator.push(
+      switch (call.method) {
+        case 'showFlutterAlert':
+          String title = call.arguments['title'];
+          String message = call.arguments['message'];
+          showMyDialog(title, message);
+          break;
+        case 'dismissProgressbar':
+          dismissProgressBar();
+          break;
+        case 'showLoadingSpinner':
+          progressDialogue(context);
+          break;
+        case 'PaymentFlowDone':
+          Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (BuildContext context) => const PaymentFlowDoneScreen(
-                      label: 'Customer label',
-                      amount: '10 USD',
-                      ref: 'ref',
-                    )));
+              builder: (BuildContext context) => const PaymentFlowDoneScreen(
+                label: 'Customer label',
+                amount: '10 USD',
+                ref: 'ref',
+              ),
+            ),
+          );
+          break;
+        default:
+          // Handle an unknown method call or provide an error response.
+          break;
       }
     });
   }
