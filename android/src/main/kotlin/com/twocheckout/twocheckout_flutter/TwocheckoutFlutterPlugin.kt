@@ -76,6 +76,7 @@ class TwocheckoutFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
         const val SHOW_PAYMENT_METHODS = "showPaymentMethods"
         const val SET_2CHECKOUT_CREDENTIALS = "setTwoCheckCredentials"
         const val PAYMENT_FLOW_DONE = "PaymentFlowDone"
+        const val API_RESPONSE = "apiResponse"
 
     }
 
@@ -116,13 +117,23 @@ class TwocheckoutFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
         }
         return false
     }
-    private fun showNativeAlert(title: String, msg: String) {
+    private fun showNativeAlert(response: String, msg: String) {
         val arguments = hashMapOf<String, String>()
         arguments["title"] = title
         arguments["message"] = msg
         channel.invokeMethod(ALERT_DIALOG, arguments)
     }
 
+    private fun onApiCallResponse(response: String) {
+        channel.invokeMethod(API_RESPONSE, response)
+    }
+
+    private fun onPaypalFailureResponse(title: String, msg: String) {
+        val arguments = hashMapOf<String, String>()
+        arguments["title"] = title
+        arguments["message"] = msg
+        channel.invokeMethod(ALERT_DIALOG, arguments)
+    }
     override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
         channel.setMethodCallHandler(null)
     }
