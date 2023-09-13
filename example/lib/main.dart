@@ -25,52 +25,19 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
-  final _twoCheckoutFlutterPlugin = TwocheckoutFlutter();
+class _MyAppState extends State<MyApp> implements TwoCheckoutFlutterEvents{
+  late final _twoCheckoutFlutterPlugin;
 
   @override
   void initState() {
     super.initState();
 
+    _twoCheckoutFlutterPlugin = TwoCheckoutFlutterEventsImpl(twoCheckoutFlutterEvents: this);
     /// Set 2Checkout credentials
 
     _twoCheckoutFlutterPlugin.setTwoCheckoutCredentials(
         "secretKey", "merchant_key");
 
-    /// Set method call handler to handle calls from Native side
-
-    _twoCheckoutFlutterPlugin
-        .getMethodChannel()
-        .setMethodCallHandler((MethodCall call) async {
-      switch (call.method) {
-        case 'showFlutterAlert':
-          String title = call.arguments['title'];
-          String message = call.arguments['message'];
-          showMyDialog(title, message);
-          break;
-        case 'dismissProgressbar':
-          dismissProgressBar();
-          break;
-        case 'showLoadingSpinner':
-          progressDialogue(context);
-          break;
-        case 'PaymentFlowDone':
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (BuildContext context) => const PaymentFlowDoneScreen(
-                label: 'Customer label',
-                amount: '10 USD',
-                ref: 'ref',
-              ),
-            ),
-          );
-          break;
-        default:
-          // Handle an unknown method call or provide an error response.
-          break;
-      }
-    });
   }
 
   Future<void> showPaymentMethods() async {
@@ -158,4 +125,40 @@ class _MyAppState extends State<MyApp> {
       ),
     );
   }
+
+
+  @override
+  void onHideProgressBar() {
+    dismissProgressBar();
+  }
+
+  @override
+  void onShowDialogue(String title, String detail) {
+    showMyDialog(title,detail);
+  }
+
+  @override
+  void onShowPaymentDoneScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (BuildContext context) => const PaymentFlowDoneScreen(
+          label: 'Customer label',
+          amount: '10 USD',
+          ref: 'ref',
+        ),
+      ),
+    );
+  }
+
+  @override
+  void onShowProgressBar() {
+    progressDialogue(context);
+  }
+
+  @override
+  void onDismissDialogue() {
+    // TODO: implement onDismissDialogue
+  }
+
 }
