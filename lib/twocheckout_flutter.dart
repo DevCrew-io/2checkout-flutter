@@ -99,4 +99,8 @@ abstract class TwoCheckoutFlutterEvents {
   /// Callback to show a payment confirmation screen.
 
   void onShowPaymentDoneScreen();
+
+  /// Response Return from Api call
+
+  void onApiCallResponse();
 }
