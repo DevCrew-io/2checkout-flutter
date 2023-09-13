@@ -3,7 +3,7 @@
 ## Reporting Potential Security Issues
 
 If you discover a potential security vulnerability in this project,
-please notify us immediately by sending an email to arslan.khan@devcrew.io.
+please notify us immediately by sending an email to hello@devcrew.io.
 We appreciate your cooperation in helping us maintain the security and
 integrity of our project.
 
