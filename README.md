@@ -39,8 +39,7 @@ To ensure proper functionality on Android devices, please make sure to follow th
 2. Utilize Kotlin version 1.7.0 and above.
 3. Ensure you are using an up-to-date Android Gradle build tools version.
 4. Use an up-to-date Gradle version accordingly.
-5. Implement `PluginRegistry.ActivityResultListener` for handling `onActivityResults`.
-6. Remember to rebuild the app after making the above changes, as these changes may not take effect with hot reload.
+5. Remember to rebuild the app after making the above changes, as these changes may not take effect with hot reload.
 
 If you encounter difficulties while setting up the package on Android, join the discussion for support.
 
@@ -52,14 +51,33 @@ You can handle card payments using two methods: PayPal integration and Card Form
 The latest SDK also supports financial connections. Refer to the documentation to learn more about setting it up.
 
 ## Dart API
-The library offers several methods for handling 2Checkout-related actions:
+The library offers several methods for handling 2Checkout-related actions: 
+
+Callback to show a dialogue with title and detail.
+```dart
+void onShowDialogue(String title, String detail);
+```
+Callback to dismiss a displayed dialogue.
 
 ```dart
-Future<String?> showPaymentMethods()
-MethodChannel getMethodChannel()
-setTwoCheckoutCredentials(String secretKey, String merchantKey)
+void onDismissDialogue();
 ```
-
+Callback to show a loading spinner or progress bar.
+```dart
+void onShowProgressBar();
+```
+Callback to hide a loading spinner or progress bar (optional).
+```dart
+void onHideProgressBar();
+```
+Callback to show a payment confirmation screen.
+```dart
+void onShowPaymentDoneScreen();
+```
+Response Return from Api call
+```dart
+void onApiCallResponse();
+```
 ### Initialization of 2Checkout SDK
 ```dart
 _twoCheckoutFlutterPlugin.setTwoCheckoutCredentials(
@@ -67,40 +85,41 @@ _twoCheckoutFlutterPlugin.setTwoCheckoutCredentials(
 ```
 
 Customization of native code on the Flutter side makes it easier for Flutter developers to perform actions such as displaying alert dialogues, dismissing/loading spinners, and navigating to customized pages.
-
+you just need to implement TwoCheckoutFlutterEvents class to override your required methods
 ```dart
-    _twoCheckoutFlutterPlugin
-        .getMethodChannel()
-        .setMethodCallHandler((MethodCall call) async {
-      switch (call.method) {
-        case 'showFlutterAlert':
-          String title = call.arguments['title'];
-          String message = call.arguments['message'];
-          showMyDialog(title, message);
-          break;
-        case 'dismissProgressbar':
-          dismissProgressBar();
-          break;
-        case 'showLoadingSpinner':
-          progressDialogue(context);
-          break;
-        case 'PaymentFlowDone':
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (BuildContext context) => const PaymentFlowDoneScreen(
-                label: 'Customer label',
-                amount: '10 USD',
-                ref: 'ref',
-              ),
-            ),
-          );
-          break;
-        default:
-          // Handle an unknown method call or provide an error response.
-          break;
-      }
-    });
+  @override
+void onHideProgressBar() {
+  dismissProgressBar();
+}
+
+@override
+void onShowDialogue(String title, String detail) {
+  showMyDialog(title,detail);
+}
+
+@override
+void onShowPaymentDoneScreen() {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (BuildContext context) => const PaymentFlowDoneScreen(
+        label: 'Customer label',
+        amount: '10 USD',
+        ref: 'ref',
+      ),
+    ),
+  );
+}
+
+@override
+void onShowProgressBar() {
+  progressDialogue(context);
+}
+
+@override
+void onDismissDialogue() {
+  // TODO: implement onDismissDialogue
+}
 ```
 
 # Running the Example App
