@@ -94,57 +94,66 @@ class PaymentFlowDoneScreen extends StatelessWidget {
                   const SizedBox(height: 20.0),
                   const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [ Text(
-                    'Customer Label',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 13.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                     Text(
-                      'Customer Value',
-                      style: TextStyle(
-                        color: grey,
-                        fontSize: 13.0,
+                    children: [
+                      Text(
+                        'Customer Label',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 13.0,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),],),
+                      Text(
+                        'Customer Value',
+                        style: TextStyle(
+                          color: grey,
+                          fontSize: 13.0,
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 20.0),
                   const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [ Text(
-                    'Amount',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 13.0,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                     Text(
-                      '\$10',
-                      style: TextStyle(
-                        color: grey,
-                        fontSize: 13.0,
+                    children: [
+                      Text(
+                        'Amount',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 13.0,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),],),
+                      Text(
+                        '\$10',
+                        style: TextStyle(
+                          color: grey,
+                          fontSize: 13.0,
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 20.0),
-                 const Row(
-                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                   children: [  Text(
-                   'Reference',
-                   style: TextStyle(
-                     color: Colors.black,
-                     fontSize: 13.0,
-                     fontWeight: FontWeight.bold,
-                   ),
-                 ),
-                    Text(
-                     'Reference Value',
-                     style: TextStyle(
-                       color: grey,
-                       fontSize: 13.0,
-                     ),
-                   ),],),
+                  const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'Reference',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 13.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        'Reference Value',
+                        style: TextStyle(
+                          color: grey,
+                          fontSize: 13.0,
+                        ),
+                      ),
+                    ],
+                  ),
                   const SizedBox(height: 20.0),
                   ElevatedButton(
                     onPressed: () {

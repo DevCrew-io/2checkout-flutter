@@ -14,7 +14,6 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 class MockTwocheckoutFlutterPlatform
     with MockPlatformInterfaceMixin
     implements TwocheckoutFlutterPlatform {
-
   @override
   Future<String?> showPaymentMethods() => Future.value('42');
 
@@ -32,20 +31,25 @@ class MockTwocheckoutFlutterPlatform
 }
 
 void main() {
-  final TwocheckoutFlutterPlatform initialPlatform = TwocheckoutFlutterPlatform.instance;
+  final TwocheckoutFlutterPlatform initialPlatform =
+      TwocheckoutFlutterPlatform.instance;
 
   test('$MethodChannelTwocheckoutFlutter is the default instance', () {
     expect(initialPlatform, isInstanceOf<MethodChannelTwocheckoutFlutter>());
   });
 
   test('getPlatformVersion', () async {
-    TwoCheckoutFlutterEventsImpl twocheckoutFlutterPlugin = TwoCheckoutFlutterEventsImpl(twoCheckoutFlutterEvents: MockTwoCheckoutFlutterEvents());
-    MockTwocheckoutFlutterPlatform fakePlatform = MockTwocheckoutFlutterPlatform();
+    TwoCheckoutFlutterEventsImpl twocheckoutFlutterPlugin =
+        TwoCheckoutFlutterEventsImpl(
+            twoCheckoutFlutterEvents: MockTwoCheckoutFlutterEvents());
+    MockTwocheckoutFlutterPlatform fakePlatform =
+        MockTwocheckoutFlutterPlatform();
     TwocheckoutFlutterPlatform.instance = fakePlatform;
 
     expect(await twocheckoutFlutterPlugin.showPaymentMethods(), '42');
   });
 }
+
 // Define a mock event handler for testing purposes.
 class MockTwoCheckoutFlutterEvents extends TwoCheckoutFlutterEvents {
   @override

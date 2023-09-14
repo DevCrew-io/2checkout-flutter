@@ -17,19 +17,22 @@ class MethodChannelTwocheckoutFlutter extends TwocheckoutFlutterPlatform {
 
   @override
   Future<String?> showPaymentMethods() async {
-    final version = await methodChannel.invokeMethod<String>('showPaymentMethods');
+    final version =
+        await methodChannel.invokeMethod<String>('showPaymentMethods');
     return version;
   }
- @override
+
+  @override
   MethodChannel getMethodChannel() {
     return methodChannel;
   }
+
   @override
   setTwoCheckCredentials(String secretKey, String merchantKey) {
     final Map<String, dynamic> arguments = {
       'arg1': secretKey,
       'arg2': merchantKey,
     };
-     methodChannel.invokeMethod<String>('setTwoCheckCredentials',arguments);
+    methodChannel.invokeMethod<String>('setTwoCheckCredentials', arguments);
   }
 }
