@@ -1,7 +1,10 @@
 name: twocheckout_flutter
 description: A new Flutter project.
 version: 0.0.1
-homepage:
+homepage: https://github.com/DevCrew-io/2checkout-flutter#readme
+repository: https://github.com/DevCrew-io/2checkout-flutter
+issue_tracker: https://github.com/DevCrew-io/2checkout-flutter/issues
+documentation: https://github.com/DevCrew-io/2checkout-flutter/blob/main/README.md
 
 environment:
   sdk: '>=3.1.0-231.0.dev <4.0.0'
