@@ -39,7 +39,7 @@ void main() {
   });
 
   test('getPlatformVersion', () async {
-    TwocheckoutFlutter twocheckoutFlutterPlugin = TwocheckoutFlutter();
+    TwoCheckoutFlutterEventsImpl twocheckoutFlutterPlugin = TwoCheckoutFlutterEventsImpl(twoCheckoutFlutterEvents: TwoCheckoutFlutterEvents());
     MockTwocheckoutFlutterPlatform fakePlatform = MockTwocheckoutFlutterPlatform();
     TwocheckoutFlutterPlatform.instance = fakePlatform;
 
