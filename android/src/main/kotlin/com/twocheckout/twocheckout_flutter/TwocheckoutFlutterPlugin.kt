@@ -117,7 +117,7 @@ class TwocheckoutFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
         }
         return false
     }
-    private fun showNativeAlert(response: String, msg: String) {
+    private fun showNativeAlert(title: String, msg: String) {
         val arguments = hashMapOf<String, String>()
         arguments["title"] = title
         arguments["message"] = msg
