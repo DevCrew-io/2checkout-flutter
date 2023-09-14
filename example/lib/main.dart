@@ -25,19 +25,20 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> implements TwoCheckoutFlutterEvents{
+class _MyAppState extends State<MyApp> implements TwoCheckoutFlutterEvents {
   late final _twoCheckoutFlutterPlugin;
 
   @override
   void initState() {
     super.initState();
 
-    _twoCheckoutFlutterPlugin = TwoCheckoutFlutterEventsImpl(twoCheckoutFlutterEvents: this);
+    _twoCheckoutFlutterPlugin =
+        TwoCheckoutFlutterEventsImpl(twoCheckoutFlutterEvents: this);
+
     /// Set 2Checkout credentials
 
     _twoCheckoutFlutterPlugin.setTwoCheckoutCredentials(
         "secretKey", "merchant_key");
-
   }
 
   Future<void> showPaymentMethods() async {
@@ -126,7 +127,6 @@ class _MyAppState extends State<MyApp> implements TwoCheckoutFlutterEvents{
     );
   }
 
-
   @override
   void onHideProgressBar() {
     dismissProgressBar();
@@ -134,7 +134,7 @@ class _MyAppState extends State<MyApp> implements TwoCheckoutFlutterEvents{
 
   @override
   void onShowDialogue(String title, String detail) {
-    showMyDialog(title,detail);
+    showMyDialog(title, detail);
   }
 
   @override
@@ -165,5 +165,4 @@ class _MyAppState extends State<MyApp> implements TwoCheckoutFlutterEvents{
   void onApiCallResponse() {
     // TODO: implement onApiCallResponse
   }
-
 }

@@ -11,7 +11,6 @@ import 'twocheckout_flutter_platform_interface.dart';
 /// Define a class for handling TwoCheckout events and interactions.
 
 class TwoCheckoutFlutterEventsImpl {
-
   /// Instance variable to store the event handler.
 
   final TwoCheckoutFlutterEvents twoCheckoutFlutterEvents;
@@ -19,7 +18,6 @@ class TwoCheckoutFlutterEventsImpl {
   /// Constructor to initialize the event handler.
 
   TwoCheckoutFlutterEventsImpl({required this.twoCheckoutFlutterEvents}) {
-
     /// Set up a method call handler to receive messages from native code.
 
     getMethodChannel().setMethodCallHandler((MethodCall call) async {
@@ -79,7 +77,6 @@ class TwoCheckoutFlutterEventsImpl {
 /// Abstract class defining event callbacks related to TwoCheckout.
 
 abstract class TwoCheckoutFlutterEvents {
-
   /// Callback to show a dialogue with title and detail.
 
   void onShowDialogue(String title, String detail);

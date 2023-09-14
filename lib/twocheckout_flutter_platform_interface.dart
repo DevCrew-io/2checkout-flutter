@@ -15,7 +15,8 @@ abstract class TwocheckoutFlutterPlatform extends PlatformInterface {
 
   static final Object _token = Object();
 
-  static TwocheckoutFlutterPlatform _instance = MethodChannelTwocheckoutFlutter();
+  static TwocheckoutFlutterPlatform _instance =
+      MethodChannelTwocheckoutFlutter();
 
   /// The default instance of [TwocheckoutFlutterPlatform] to use.
   ///
@@ -29,13 +30,17 @@ abstract class TwocheckoutFlutterPlatform extends PlatformInterface {
     PlatformInterface.verifyToken(instance, _token);
     _instance = instance;
   }
+
   Future<String?> showPaymentMethods() {
     throw UnimplementedError('showPaymentMethods() has not been implemented.');
   }
+
   MethodChannel getMethodChannel() {
     throw UnimplementedError('getMethodChannel() has not been implemented.');
   }
-  setTwoCheckCredentials(String secretKey,String merchantKey){
-    throw UnimplementedError('setTwoCheckCredentials() has not been implemented.');
+
+  setTwoCheckCredentials(String secretKey, String merchantKey) {
+    throw UnimplementedError(
+        'setTwoCheckCredentials() has not been implemented.');
   }
 }
