@@ -1,6 +1,6 @@
 name: twocheckout_flutter
 description: A wrapper flutter plugin for implementation of 2checkout-android-sdk
-version: 0.0.1-dev.1
+version: 0.0.1-dev.2
 homepage: https://github.com/DevCrew-io/2checkout-flutter#readme
 repository: https://github.com/DevCrew-io/2checkout-flutter
 issue_tracker: https://github.com/DevCrew-io/2checkout-flutter/issues
