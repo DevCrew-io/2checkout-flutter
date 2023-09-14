@@ -16,10 +16,31 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   testWidgets('getPlatformVersion test', (WidgetTester tester) async {
-    final TwoCheckoutFlutterEventsImpl plugin = TwoCheckoutFlutterEventsImpl(twoCheckoutFlutterEvents: TwoCheckoutFlutterEvents());
+    final TwoCheckoutFlutterEventsImpl plugin = TwoCheckoutFlutterEventsImpl(twoCheckoutFlutterEvents: MockTwoCheckoutFlutterEvents());
     final String? version = await plugin.showPaymentMethods();
     // The version string depends on the host platform running the test, so
     // just assert that some non-empty string is returned.
     expect(version?.isNotEmpty, true);
   });
+}
+
+// Define a mock event handler for testing purposes.
+class MockTwoCheckoutFlutterEvents extends TwoCheckoutFlutterEvents {
+  @override
+  void onShowDialogue(String title, String detail) {}
+
+  @override
+  void onDismissDialogue() {}
+
+  @override
+  void onShowProgressBar() {}
+
+  @override
+  void onHideProgressBar() {}
+
+  @override
+  void onShowPaymentDoneScreen() {}
+
+  @override
+  void onApiCallResponse() {}
 }

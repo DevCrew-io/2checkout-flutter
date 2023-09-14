@@ -39,10 +39,30 @@ void main() {
   });
 
   test('getPlatformVersion', () async {
-    TwoCheckoutFlutterEventsImpl twocheckoutFlutterPlugin = TwoCheckoutFlutterEventsImpl(twoCheckoutFlutterEvents: TwoCheckoutFlutterEvents());
+    TwoCheckoutFlutterEventsImpl twocheckoutFlutterPlugin = TwoCheckoutFlutterEventsImpl(twoCheckoutFlutterEvents: MockTwoCheckoutFlutterEvents());
     MockTwocheckoutFlutterPlatform fakePlatform = MockTwocheckoutFlutterPlatform();
     TwocheckoutFlutterPlatform.instance = fakePlatform;
 
     expect(await twocheckoutFlutterPlugin.showPaymentMethods(), '42');
   });
+}
+// Define a mock event handler for testing purposes.
+class MockTwoCheckoutFlutterEvents extends TwoCheckoutFlutterEvents {
+  @override
+  void onShowDialogue(String title, String detail) {}
+
+  @override
+  void onDismissDialogue() {}
+
+  @override
+  void onShowProgressBar() {}
+
+  @override
+  void onHideProgressBar() {}
+
+  @override
+  void onShowPaymentDoneScreen() {}
+
+  @override
+  void onApiCallResponse() {}
 }
