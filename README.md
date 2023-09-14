@@ -1,6 +1,6 @@
 # 2Checkout Flutter
 
-[![pub package](https://img.shields.io/github/v/tag/DevCrew-io/2checkout-flutter)](https://pub.dev/packages/2checkout-flutter)
+[![pub package](https://img.shields.io/pub/v/com.twocheckout.twocheckout_flutter)](https://pub.dev/packages/2checkout-flutter)
 [![license](https://img.shields.io/badge/license-MIT-green)](https://github.com/DevCrew-io/2checkout-flutter/LICENSE)
 ![](https://img.shields.io/badge/Code-Dart-informational?style=flat&logo=dart&color=29B1EE)
 ![](https://img.shields.io/badge/Code-Flutter-informational?style=flat&logo=flutter&color=0C459C)
