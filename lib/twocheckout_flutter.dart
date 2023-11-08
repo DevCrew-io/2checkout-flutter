@@ -4,8 +4,11 @@
 //
 //  Copyright © 2023 DevCrew I/O
 //
+import 'dart:convert';
+
 import 'package:flutter/services.dart';
 
+import 'model/PaymentFormResult.dart';
 import 'twocheckout_flutter_platform_interface.dart';
 
 /// Define a class for handling TwoCheckout events and interactions.
@@ -51,14 +54,22 @@ class TwoCheckoutFlutterEventsImpl {
 
           twoCheckoutFlutterEvents.onShowPaymentDoneScreen();
           break;
+        case 'paymentFormComplete':
+
+          /// Call the event handler to use 2checkout create order api.
+
+          PaymentFormResult result = PaymentFormResult.fromJson(call.arguments);
+
+          twoCheckoutFlutterEvents.onPaymentFormComplete(result);
+          break;
       }
     });
   }
 
   /// Method to initiate the display of payment methods.
 
-  Future<String?> showPaymentMethods() {
-    return TwocheckoutFlutterPlatform.instance.showPaymentMethods();
+  showPaymentMethods(double price, String currency, {String successReturnUrl = "", String cancelReturnUrl = "", String local = "en"}) {
+    TwocheckoutFlutterPlatform.instance.showPaymentMethods(price, currency, successReturnUrl, cancelReturnUrl, local);
   }
 
   /// Method to obtain the Flutter platform's method channel for communication.
@@ -71,6 +82,11 @@ class TwoCheckoutFlutterEventsImpl {
   setTwoCheckoutCredentials(String secretKey, String merchantKey) {
     TwocheckoutFlutterPlatform.instance
         .setTwoCheckCredentials(secretKey, merchantKey);
+  }
+
+  authorizePaymentWithOrderResponse(Map<dynamic, dynamic> result) {
+    TwocheckoutFlutterPlatform.instance
+        .authorizePaymentWithOrderResponse(result);
   }
 }
 
@@ -96,6 +112,11 @@ abstract class TwoCheckoutFlutterEvents {
   /// Callback to show a payment confirmation screen.
 
   void onShowPaymentDoneScreen();
+
+  /// make 2Checkout API call to create an order with the received token
+  /// https://app.swaggerhub.com/apis-docs/2Checkout-API/api-rest_documentation/6.0#/Order/post_orders_
+
+  void onPaymentFormComplete(PaymentFormResult paymentFormResult);
 
   /// Response Return from Api call
 

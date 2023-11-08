@@ -16,15 +16,20 @@ class MethodChannelTwocheckoutFlutter extends TwocheckoutFlutterPlatform {
   final methodChannel = const MethodChannel('twocheckout_flutter');
 
   @override
-  Future<String?> showPaymentMethods() async {
-    final version =
-        await methodChannel.invokeMethod<String>('showPaymentMethods');
-    return version;
+  MethodChannel getMethodChannel() {
+    return methodChannel;
   }
 
   @override
-  MethodChannel getMethodChannel() {
-    return methodChannel;
+  showPaymentMethods(double price, String currency, String successReturnUrl, String cancelReturnUrl, String local) {
+    final Map<String, dynamic> arguments = {
+      'price': price,
+      'currency': currency,
+      'successReturnUrl': successReturnUrl,
+      'cancelReturnUrl': cancelReturnUrl,
+      'local': local
+    };
+    methodChannel.invokeMethod<String>('showPaymentMethods', arguments);
   }
 
   @override
@@ -34,5 +39,10 @@ class MethodChannelTwocheckoutFlutter extends TwocheckoutFlutterPlatform {
       'arg2': merchantKey,
     };
     methodChannel.invokeMethod<String>('setTwoCheckCredentials', arguments);
+  }
+
+  @override
+  authorizePaymentWithOrderResponse(Map<dynamic, dynamic> result) {
+    methodChannel.invokeListMethod('authorizePayment', result);
   }
 }

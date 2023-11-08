@@ -1,0 +1,38 @@
+"switchButtonText" = "Save details for next time";
+"cardHolderNameInvalid" = "Card holder name is invalid";
+"cardExpired" = "Kaart on aegunud";
+"cardExpiryDateFormat" = "Ebakorrektne kuupäev. Vorming = kk/pp";
+"cardExpiryLabel" = "Aegumiskuupäev";
+"cardNumberLabel" = "Kaardi number";
+"cardNumberPlaceholder" = "Sinu kaardi number";
+"cardTitle" = "Krediitkaart";
+"cvvLabel" = "CVV";
+"cvvNotValid" = "CVV-kood on vale";
+"cvvPlaceholder3" = "CVV";
+"cvvPlaceholder4" = "CVV";
+"expiryPlaceholder" = "KK/AA";
+"footerText" = "Verifone'i turvalised maksed";
+"languageName" = "Eesti";
+"lengthNotValid" = "Kaardi numbri pikkus ei sobi";
+"nrNotValid" = "Kaardi number on vale";
+"submitPay" = "Maksa";
+"submitTitle" = "Kinnita";
+"yearNotValid" = "Aegumisaasta ei saa olla hilisem kui";
+"customerText" = "Klient";
+"cardExpiryDateFormat" = "Ebakorrektne kuupäev. Vorming = kk/pp";
+"paymentSelectTitle" = "Vali makseviis";
+
+"paymentProductCard" = "Krediitkaart";
+"paymentProductPaypal" = "PayPal";
+"paymentProductGooglePay" = "Google Pay";
+"paymentProductApplePay" = "Apple Pay";
+"paymentProductKlarna" = "Klarna";
+"paymentProductVipps" = "Vipps";
+"paymentProductSwish" = "Swish";
+"paymentProductMobilePay" = "MobilePay";
+"paymentProductCrypto" = "Krüpto";
+
+"transactionIncorrectCardInformation" = "Valed kaardiandmed";
+"transactionIncorrectCVV" = "Vale CVV";
+"cancelButtonText" = "Tagasi poodi";
+"footerText" = "turvalised maksed";
