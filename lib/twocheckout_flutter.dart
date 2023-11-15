@@ -85,7 +85,7 @@ class TwoCheckoutFlutterEventsImpl {
   }
 
   /// Method to initiate the display of payment methods.
-  showPaymentMethods(double price, String currency, {String local = "en"}) {
+  showPaymentMethods({required double price, required String currency, String local = "en"}) {
     TwocheckoutFlutterPlatform.instance
         .showPaymentMethods(price, currency, local);
   }

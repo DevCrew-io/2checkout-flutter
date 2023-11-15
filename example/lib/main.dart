@@ -44,7 +44,7 @@ class _MyAppState extends State<MyApp> implements TwoCheckoutFlutterEvents {
 
   void showPaymentMethods() {
     /// Show payment methods using the TwoCheckoutFlutter plugin
-    _twoCheckoutFlutterPlugin.showPaymentMethods(10.5, 'EUR');
+    _twoCheckoutFlutterPlugin.showPaymentMethods(price: 10.1, currency: "USD");
   }
 
   createCardTokenWithoutUI() async {
