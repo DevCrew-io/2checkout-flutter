@@ -5,9 +5,11 @@
 //  Copyright © 2023 DevCrew I/O
 //
 
+import 'package:twocheckout_flutter/model/PaymentMethodType.dart';
+
 class PaymentFormResult {
   late String cardHolder;
-  late String paymentMethod;
+  late PaymentMethodType paymentMethod;
   late String token;
   late bool isCardSaveOn;
 
@@ -20,7 +22,7 @@ class PaymentFormResult {
 
   PaymentFormResult.fromJson(Map<dynamic, dynamic> json) {
     cardHolder = json['cardHolder'] ?? "";
-    paymentMethod = json['paymentMethod'] ?? "";
+    paymentMethod = PaymentMethodType.fromValue(json['paymentMethod'] ?? "");
     token = json['token'] ?? "";
     isCardSaveOn = json['isCardSaveOn'] ?? false;
   }
