@@ -7,6 +7,7 @@
 import 'package:flutter/src/services/platform_channel.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:twocheckout_flutter/model/PaymentFormResult.dart';
+import 'package:twocheckout_flutter/model/PaymentMethodType.dart';
 import 'package:twocheckout_flutter/twocheckout_flutter.dart';
 import 'package:twocheckout_flutter/twocheckout_flutter_platform_interface.dart';
 import 'package:twocheckout_flutter/twocheckout_flutter_method_channel.dart';
@@ -30,15 +31,23 @@ class MockTwocheckoutFlutterPlatform
     throw UnimplementedError();
   }
 
+
+
   @override
-  authorizePaymentWithOrderResponse(Map result) {
+  showPaymentMethods(double price, String currency, String local) {
+    // TODO: implement showPaymentMethods
+    throw UnimplementedError();
+  }
+
+  @override
+  authorizePaymentWithOrderResponse(String url, Map parameters, String successReturnUrl, String cancelReturnUrl) {
     // TODO: implement authorizePaymentWithOrderResponse
     throw UnimplementedError();
   }
 
   @override
-  showPaymentMethods(double price, String currency, String successReturnUrl, String cancelReturnUrl, String local) {
-    // TODO: implement showPaymentMethods
+  createToken({required String name, required String creditNumber, required String cvv, required String expiryDate, String? scope}) {
+    // TODO: implement createToken
     throw UnimplementedError();
   }
 }
@@ -66,23 +75,38 @@ void main() {
 // Define a mock event handler for testing purposes.
 class MockTwoCheckoutFlutterEvents extends TwoCheckoutFlutterEvents {
   @override
-  void onShowDialogue(String title, String detail) {}
+  void authorizePaymentDidCancel() {
+    // TODO: implement authorizePaymentDidCancel
+  }
 
   @override
-  void onDismissDialogue() {}
+  void authorizePaymentDidCompleteAuthorizing(Map result) {
+    // TODO: implement authorizePaymentDidCompleteAuthorizing
+  }
 
   @override
-  void onShowProgressBar() {}
+  void onPaymentFormComplete(PaymentFormResult paymentFormResult) {
+    // TODO: implement onPaymentFormComplete
+  }
 
   @override
-  void onHideProgressBar() {}
+  void paymentFailedWithError(String message) {
+    // TODO: implement paymentFailedWithError
+  }
 
   @override
-  void onShowPaymentDoneScreen() {}
+  void paymentFormWillClose() {
+    // TODO: implement paymentFormWillClose
+  }
 
   @override
-  void onApiCallResponse() {}
+  void paymentFormWillShow() {
+    // TODO: implement paymentFormWillShow
+  }
 
   @override
-  void onPaymentFormComplete(PaymentFormResult paymentFormResult) {}
+  void paymentMethodSelected(PaymentMethodType paymentMethod) {
+    // TODO: implement paymentMethodSelected
+  }
+
 }

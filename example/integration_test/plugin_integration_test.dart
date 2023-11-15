@@ -9,6 +9,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:twocheckout_flutter/model/PaymentFormResult.dart';
+import 'package:twocheckout_flutter/model/PaymentMethodType.dart';
 
 import 'package:twocheckout_flutter/twocheckout_flutter.dart';
 
@@ -28,23 +29,37 @@ void main() {
 // Define a mock event handler for testing purposes.
 class MockTwoCheckoutFlutterEvents extends TwoCheckoutFlutterEvents {
   @override
-  void onShowDialogue(String title, String detail) {}
+  void authorizePaymentDidCancel() {
+    // TODO: implement authorizePaymentDidCancel
+  }
 
   @override
-  void onDismissDialogue() {}
+  void authorizePaymentDidCompleteAuthorizing(Map result) {
+    // TODO: implement authorizePaymentDidCompleteAuthorizing
+  }
 
   @override
-  void onShowProgressBar() {}
+  void onPaymentFormComplete(PaymentFormResult paymentFormResult) {
+    // TODO: implement onPaymentFormComplete
+  }
 
   @override
-  void onHideProgressBar() {}
+  void paymentFailedWithError(String message) {
+    // TODO: implement paymentFailedWithError
+  }
 
   @override
-  void onShowPaymentDoneScreen() {}
+  void paymentFormWillClose() {
+    // TODO: implement paymentFormWillClose
+  }
 
   @override
-  void onApiCallResponse() {}
+  void paymentFormWillShow() {
+    // TODO: implement paymentFormWillShow
+  }
 
   @override
-  void onPaymentFormComplete(PaymentFormResult paymentFormResult) {}
+  void paymentMethodSelected(PaymentMethodType paymentMethod) {
+    // TODO: implement paymentMethodSelected
+  }
 }

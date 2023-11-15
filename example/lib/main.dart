@@ -11,6 +11,8 @@ import 'dart:async';
 
 import 'package:flutter/services.dart';
 import 'package:twocheckout_flutter/model/PaymentFormResult.dart';
+import 'package:twocheckout_flutter/model/PaymentMethodType.dart';
+import 'package:twocheckout_flutter/model/TokenResult.dart';
 import 'package:twocheckout_flutter/twocheckout_flutter.dart';
 import 'package:twocheckout_flutter_example/payment_flow_done.dart';
 
@@ -37,20 +39,24 @@ class _MyAppState extends State<MyApp> implements TwoCheckoutFlutterEvents {
         TwoCheckoutFlutterEventsImpl(twoCheckoutFlutterEvents: this);
 
     /// Set 2Checkout credentials
-
-    _twoCheckoutFlutterPlugin.setTwoCheckoutCredentials(
-        "secretKey", "merchant_key");
+    _twoCheckoutFlutterPlugin.setTwoCheckoutCredentials(secretKey: "l_r4hBv?DV~03]dubI[#", merchantCode: "254731075008");
   }
 
   void showPaymentMethods() {
-    /// Show payment methods using the TwocheckoutFlutter plugin
-
-
+    /// Show payment methods using the TwoCheckoutFlutter plugin
     _twoCheckoutFlutterPlugin.showPaymentMethods(10.5, 'EUR');
   }
 
-  /// Dialog for showing Alert messages sent from the Native side
+  createCardTokenWithoutUI() async {
+    /// Method to get card token without ui.
+    showProgressBar();
+    TokenResult result = await _twoCheckoutFlutterPlugin.createToken(name: "Najam", creditNumber: "4111111111111111", cvv: "123", expiryDate: "12/25");
 
+    dismissProgressBar();
+    showMyDialog(result.token == null ? "Error" : "Success", result.token == null ? result.error ?? "" : "Generated Token: ${result.token ?? ""}");
+  }
+
+  /// Dialog for showing Alert messages sent from the Native side
   Future<void> showMyDialog(String title, String detail) async {
     return showDialog<void>(
       context: context,
@@ -93,6 +99,10 @@ class _MyAppState extends State<MyApp> implements TwoCheckoutFlutterEvents {
     );
   }
 
+  void showProgressBar() {
+    progressDialogue(context);
+  }
+
   dismissProgressBar() {
     log('Dismiss Progress bar in Flutter');
     Navigator.of(context, rootNavigator: true).pop();
@@ -122,7 +132,13 @@ class _MyAppState extends State<MyApp> implements TwoCheckoutFlutterEvents {
                 onPressed: () {
                   showPaymentMethods();
                 },
-                child: const Text("Payment"))
+                child: const Text("Payment")),
+
+            ElevatedButton(
+                onPressed: () {
+                  createCardTokenWithoutUI();
+                },
+                child: const Text("Create Card Token"))
           ],
         ),
       ),
@@ -130,17 +146,22 @@ class _MyAppState extends State<MyApp> implements TwoCheckoutFlutterEvents {
   }
 
   @override
-  void onHideProgressBar() {
-    dismissProgressBar();
+  void onPaymentFormComplete(PaymentFormResult paymentFormResult) {
+    /// Call 2Checkout create order api & handle its response if there is an authorized3D param in response call bellow method with required parameters.
+    _twoCheckoutFlutterPlugin.authorizePaymentWithOrderResponse("https://www.google.com", { "name" : "Najam Us Saqib, iOS Developer" });
   }
 
   @override
-  void onShowDialogue(String title, String detail) {
-    showMyDialog(title, detail);
+  void authorizePaymentDidCancel() {
+    print("Payment is cancelled");
+    showMyDialog("Alert", "Payment process is cancelled by user");
   }
 
   @override
-  void onShowPaymentDoneScreen() {
+  void authorizePaymentDidCompleteAuthorizing(Map<dynamic, dynamic> result) {
+    /// Use 2Checkout order status api to check the payment status before navigate to next screen.
+    print("Dart: authorizePaymentDidCompleteAuthorizing ${result}");
+
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -154,190 +175,22 @@ class _MyAppState extends State<MyApp> implements TwoCheckoutFlutterEvents {
   }
 
   @override
-  void onShowProgressBar() {
-    progressDialogue(context);
+  void paymentFailedWithError(String message) {
+    showMyDialog("Error", message);
   }
 
   @override
-  void onDismissDialogue() {
-    // TODO: implement onDismissDialogue
+  void paymentFormWillClose() {
+    // TODO: implement paymentFormWillClose
   }
 
   @override
-  void onApiCallResponse() {
-    // TODO: implement onApiCallResponse
+  void paymentFormWillShow() {
+    // TODO: implement paymentFormWillShow
   }
 
   @override
-  void onPaymentFormComplete(PaymentFormResult paymentFormResult) {
-    Map<dynamic, dynamic> response = {
-      "AdditionalFields": null,
-      "AffiliateCommission": 0,
-      "Affiliate": {
-        "AffiliateCode": null,
-        "AffiliateSource": null,
-        "AffiliateName": null,
-        "AffiliateUrl": null
-      },
-      "ApproveStatus": "WAITING",
-      "AvangateCommission": 80.39,
-      "BillingDetails": {
-        "Address1": "",
-        "Address2": "",
-        "City": "LA",
-        "Company": null,
-        "CountryCode": "br",
-        "Email": "customer@example.com",
-        "FirstName": "Customer",
-        "FiscalCode": "056.027.963-98",
-        "LastName": "2Checkout",
-        "Phone": "556133127400",
-        "State": "Distrito Federal",
-        "TaxOffice": "null,",
-        "Zip": "70403-900"
-      },
-      "Currency": "brl",
-      "CustomerDetails": null,
-      "DeliveryDetails": {
-        "Address1": "",
-        "Address2": "",
-        "City": "LA",
-        "Company": null,
-        "CountryCode": "br",
-        "Email": "customer@example.com",
-        "FirstName": "Customer",
-        "LastName": "2Checkout",
-        "Phone": "556133127400",
-        "State": "Distrito Federal",
-        "Zip": "70403-900"
-      },
-      "Discount": 0,
-      "Errors": {
-        "ORDER_ERROR": "GATEWAY_ACCEPT"
-      },
-      "ExternalReference": "REST_API_AVANGTE",
-      "ExtraDiscount": null,
-      "ExtraDiscountPercent": null,
-      "ExtraInformation": {
-        "RetryFailedPaymentLink": "https://store.avancart.com/order/finish.php?id=2Xrl83GEleyOsn3tfdXcZXKBy4sdasdas"
-      },
-      "ExtraMargin": null,
-      "ExtraMarginPercent": null,
-      "FinishDate": null,
-      "GiftDetails": null,
-      "GrossDiscountedPrice": 384.45,
-      "GrossPrice": 384.45,
-      "HasShipping": false,
-      "Items": [
-        {
-          "AdditionalFields": null,
-          "Code": "my_subscription_1",
-          "CrossSell": null,
-          "Price": {
-            "AffiliateCommission": 0,
-            "Currency": "brl",
-            "Discount": 0,
-            "GrossDiscountedPrice": 384.45,
-            "GrossPrice": 384.45,
-            "NetDiscountedPrice": 384.45,
-            "NetPrice": 384.45,
-            "UnitAffiliateCommission": 0,
-            "UnitDiscount": 0,
-            "UnitGrossDiscountedPrice": 384.45,
-            "UnitGrossPrice": 384.45,
-            "UnitNetDiscountedPrice": 384.45,
-            "UnitNetPrice": 384.45,
-            "UnitVAT": 0,
-            "VAT": 0
-          },
-          "PriceOptions": [
-            {
-              "Code": "USERS",
-              "Options": [
-                "oneuser1"
-              ],
-              "Required": false
-            }
-          ],
-          "ProductDetails": {
-            "ExtraInfo": null,
-            "Name": "2Checkout Subscription",
-            "RenewalStatus": false,
-            "Subscriptions": null
-          },
-          "Promotion": {
-            "Name": "Regular promotion",
-            "Code": "F07GBYJ2F6",
-            "Description": "description",
-            "StartDate": "2022--11-01",
-            "EndDate": "2022-11-30",
-            "MaximumOrdersNumber": null,
-            "MaximumQuantity": null,
-            "InstantDiscount": false,
-            "Coupon": "",
-            "DiscountLabel": "30",
-            "Enabled": true,
-            "Type": "REGULAR",
-            "Discount": 30,
-            "DiscountCurrency": "USD",
-            "DiscountType": "PERCENT"
-          },
-          "Quantity": 1,
-          "SKU": "NewSubscriptionPurchase",
-          "Trial": null
-        }
-      ],
-      "Language": "en",
-      "LocalTime": null,
-      "NetDiscountedPrice": 384.45,
-      "NetPrice": 384.45,
-      "OrderDate": "2016-02-08 19:19:53",
-      "OrderFlow": "REGULAR",
-      "OrderNo": 0,
-      "Origin": "API",
-      "PODetails": null,
-      "PartnerCode": null,
-      "PartnerMargin": null,
-      "PartnerMarginPercent": null,
-      "PaymentDetails": {
-        "Type": "PAYPAL_EXPRESS",
-        "Currency": "USD",
-        "CustomerIP": "91.220.121.21",
-        "PaymentMethod": {
-          "RedirectUrl": "http://www.success.com",
-          "RecuringEnabled": false,
-          "Vendor3DSReturnURL": null,
-          "Vendor3DSCancelURL": null,
-          "InstallmentsNumber": null
-        }
-      },
-      "Promotions": [
-        {
-          "Name": "global promotion",
-          "Code": "F07GBYJ2F6",
-          "Description": "description",
-          "StartDate": "2022--11-01",
-          "EndDate": "2022-11-30",
-          "MaximumOrdersNumber": null,
-          "MaximumQuantity": null,
-          "InstantDiscount": false,
-          "Coupon": "",
-          "DiscountLabel": "30",
-          "Enabled": true,
-          "Type": "GLOBAL",
-          "Discount": 30,
-          "DiscountCurrency": "USD",
-          "DiscountType": "PERCENT"
-        }
-      ],
-      "RefNo": "1234567",
-      "ShopperRefNo": null,
-      "Source": "testAPI.com",
-      "Status": "PENDING",
-      "TestOrder": false,
-      "VAT": 0,
-      "VendorApproveStatus": "OK"
-    };
-    _twoCheckoutFlutterPlugin.authorizePaymentWithOrderResponse(response);
+  void paymentMethodSelected(PaymentMethodType paymentMethod) {
+    // TODO: implement paymentMethodSelected
   }
 }
