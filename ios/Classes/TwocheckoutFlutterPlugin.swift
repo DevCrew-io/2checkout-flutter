@@ -1,3 +1,10 @@
+//
+//  TwocheckoutFlutterPlugin.swift
+//  com.twocheckout.twocheckout_flutter
+//
+//  Copyright © 2023 DevCrew I/O
+//
+
 import Flutter
 import UIKit
 
@@ -22,6 +29,14 @@ public class TwocheckoutFlutterPlugin: NSObject, FlutterPlugin {
     
     public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
         switch call.method {
+        case InputMethod.CREATE_TOKEN:
+            if let arguments = call.arguments as? [String : Any] {
+                let card = CardFactory.createCardFromMap(arguments)
+                Verifone2COPaymentForm.createToken(merchantCode: Configuration.shared.merchantCode, card: card) { token, error in
+                    result(["token" : token?.token,
+                            "error" : error?.localizedDescription])
+                }
+            }
         case InputMethod.SET_2CHECKOUT_CREDENTIALS:
             if let arguments = call.arguments as? [String : Any] {
                 Configuration.shared.fromMap(arguments)
@@ -38,12 +53,10 @@ public class TwocheckoutFlutterPlugin: NSObject, FlutterPlugin {
                 showPaymentOptions()
             }
         case InputMethod.AUTHORIZE_PAYMENT:
-            print(call.arguments)
-//            let webConfig = VFWebConfig(url: "RedirectURL",
-//                                        parameters: ["Required parameters"],
-//                                        expectedRedirectUrl: ["expectedReturnURL"],
-//                                        expectedCancelUrl: ["expectedCancelURL"])
-//            Verifone2COPaymentForm.authorizePayment(webConfig: webConfig, delegate: self, from: self)
+            if let arguments = call.arguments as? [String : Any] {
+                AuthorizePayment.shared.fromMap(arguments)
+                Verifone2COPaymentForm.authorizePayment(webConfig: getAuthWebConfig(), delegate: self, from: rootViewController)
+            }
         default:
             result(FlutterMethodNotImplemented)
         }
@@ -53,7 +66,7 @@ public class TwocheckoutFlutterPlugin: NSObject, FlutterPlugin {
         let paymentConfiguration: Verifone2CO.PaymentConfiguration = Verifone2CO.PaymentConfiguration(
             delegate: self,
             merchantCode: Configuration.shared.merchantCode,
-            paymentPanelStoreTitle: "Store",
+            paymentPanelStoreTitle: "Payment",
             totalAmount: String(format: "%.2f", Configuration.shared.price) + " " + Configuration.shared.currency,
             allowedPaymentMethods: [.creditCard, .paypal])
         Verifone2CO.locale = Locale(identifier: Configuration.shared.local)
@@ -62,25 +75,34 @@ public class TwocheckoutFlutterPlugin: NSObject, FlutterPlugin {
         rootViewController = controller
         Verifone2COPaymentForm.present(with: paymentConfiguration, from: controller)
     }
+    
+    func getAuthWebConfig() -> VFWebConfig {
+        let expectedReturnURL = URLComponents(string: AuthorizePayment.shared.successReturnUrl)!
+        let expectedCancelURL = URLComponents(string: AuthorizePayment.shared.cancelReturnUrl)!
+        let webConfig = VFWebConfig(url: AuthorizePayment.shared.url,
+                                    parameters: AuthorizePayment.shared.parameters,
+                                    expectedRedirectUrl: [expectedReturnURL],
+                                    expectedCancelUrl: [expectedCancelURL])
+        return webConfig
+    }
 }
 
 extension TwocheckoutFlutterPlugin: PaymentFlowSessionDelegate {
     public func paymentFormWillShow() {
-        print("Payment form will be displayed")
+        getChannel()?.invokeMethod(OutputMethod.PAYMENT_FORM_WILL_SHOW, arguments: nil)
     }
     
     public func paymentFormWillClose() {
-        print("Payment form will be hidden")
+        getChannel()?.invokeMethod(OutputMethod.PAYMENT_FORM_WILL_CLOSE, arguments: nil)
     }
     
     public func paymentMethodSelected(_ paymentMethod: PaymentMethodType) {
-        print("Selected payment method: \(paymentMethod)")
+        getChannel()?.invokeMethod(OutputMethod.PAYMENT_FORM_WILL_SHOW, arguments: ["paymentMethod" : paymentMethod.rawValue])
     }
     
     public func paymentFormComplete(_ result: Result<PaymentFormResult, Error>) {
         switch result {
         case .success(let result):
-            print(result)
             let dict: [String : Any] = [
                 "cardHolder" : result.cardHolder ?? "",
                 "paymentMethod" : result.paymentMethod.rawValue,
@@ -89,17 +111,22 @@ extension TwocheckoutFlutterPlugin: PaymentFlowSessionDelegate {
             ]
             getChannel()?.invokeMethod(OutputMethod.PAYMENT_FORM_COMPLETE, arguments: dict)
         case .failure(let error):
-            print("Payment failed with error: \(error)")
+            debugPrint("Payment failed with error: \(error)")
+            getChannel()?.invokeMethod(OutputMethod.PAYMENT_FAILED_WITH_ERROR, arguments: ["error" : error.localizedDescription])
         }
     }
 }
 
 extension TwocheckoutFlutterPlugin: VF2COAuthorizePaymentControllerDelegate {
     public func authorizePaymentViewController(didCompleteAuthorizing result: PaymentAuthorizingResult) {
-        print("authorizePaymentViewController")
+        let dict: [String : Any] = [
+            "redirectedUrl" : result.redirectedUrl,
+            "queryStringDictionary" : result.queryStringDictionary ?? [:]
+        ]
+        getChannel()?.invokeMethod(OutputMethod.AUTHORIZE_PAYMENT_DID_COMPLETE, arguments: dict)
     }
     
     public func authorizePaymentViewControllerDidCancel() {
-        print("authorizePaymentViewControllerDidCancel")
+        getChannel()?.invokeMethod(OutputMethod.AUTHORIZE_PAYMENT_DID_CANCEL, arguments: nil)
     }
 }
