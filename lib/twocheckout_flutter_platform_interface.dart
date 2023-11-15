@@ -31,16 +31,26 @@ abstract class TwocheckoutFlutterPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  Future<String?> showPaymentMethods() {
-    throw UnimplementedError('showPaymentMethods() has not been implemented.');
-  }
-
   MethodChannel getMethodChannel() {
     throw UnimplementedError('getMethodChannel() has not been implemented.');
   }
 
-  setTwoCheckCredentials(String secretKey, String merchantKey) {
+  setTwoCheckCredentials(String secretKey, String merchantCode) {
     throw UnimplementedError(
         'setTwoCheckCredentials() has not been implemented.');
+  }
+
+  Future<Map<dynamic,dynamic>?> createToken({required String name, required String creditNumber, required String cvv, required String expiryDate, String? scope}) {
+    throw UnimplementedError(
+        'createToken() has not been implemented.');
+  }
+
+  showPaymentMethods(double price, String currency, String local) {
+    throw UnimplementedError('showPaymentMethods() has not been implemented.');
+  }
+
+  authorizePaymentWithOrderResponse(String url, Map<dynamic, dynamic> parameters, String successReturnUrl, String cancelReturnUrl) {
+    throw UnimplementedError(
+        'authorizePaymentWithOrderResponse() has not been implemented.');
   }
 }

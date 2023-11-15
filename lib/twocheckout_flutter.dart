@@ -4,100 +4,124 @@
 //
 //  Copyright © 2023 DevCrew I/O
 //
-import 'package:flutter/services.dart';
+import 'dart:convert';
 
+import 'package:flutter/services.dart';
+import 'package:twocheckout_flutter/model/PaymentMethodType.dart';
+import 'package:twocheckout_flutter/model/TokenResult.dart';
+
+import 'model/PaymentFormResult.dart';
 import 'twocheckout_flutter_platform_interface.dart';
 
+
 /// Define a class for handling TwoCheckout events and interactions.
-
 class TwoCheckoutFlutterEventsImpl {
-  /// Instance variable to store the event handler.
 
+  /// Instance variable to store the event handler.
   final TwoCheckoutFlutterEvents twoCheckoutFlutterEvents;
 
   /// Constructor to initialize the event handler.
-
   TwoCheckoutFlutterEventsImpl({required this.twoCheckoutFlutterEvents}) {
     /// Set up a method call handler to receive messages from native code.
-
     getMethodChannel().setMethodCallHandler((MethodCall call) async {
       switch (call.method) {
-        case 'showFlutterAlert':
+        case 'paymentFormWillShow':
 
-          /// Extract title and message from the method call arguments.
+          /// Callback when payment form will show.
+          twoCheckoutFlutterEvents.paymentFormWillShow();
 
-          String title = call.arguments['title'];
-          String message = call.arguments['message'];
+        case 'paymentFormWillClose':
 
-          /// Call the event handler to show a dialogue.
+          /// Callback when payment form will close.
+          twoCheckoutFlutterEvents.paymentFormWillClose();
 
-          twoCheckoutFlutterEvents.onShowDialogue(title, message);
-          break;
-        case 'showLoadingSpinner':
+        case 'paymentMethodSelected':
 
-          /// Call the event handler to show a progress bar.
+          /// Callback when payment method did selected.
+          twoCheckoutFlutterEvents.paymentMethodSelected(
+              PaymentMethodType.fromJson(call.arguments));
 
-          twoCheckoutFlutterEvents.onShowProgressBar();
-          break;
-        case 'dismissProgressbar':
+        case 'paymentFailedWithError':
 
-          /// Call the event handler to dismiss the progress bar.
+          /// Callback when the payment process failed with error.
+          String message = call.arguments["error"] ?? "";
+          twoCheckoutFlutterEvents.paymentFailedWithError(message);
 
-          twoCheckoutFlutterEvents.onDismissDialogue();
-          break;
-        case 'PaymentFlowDone':
+        case 'paymentFormComplete':
 
-          /// Call the event handler to show the payment confirmation screen.
+          /// Call the event handler to use 2checkout create order api.
+          PaymentFormResult result = PaymentFormResult.fromJson(call.arguments);
+          twoCheckoutFlutterEvents.onPaymentFormComplete(result);
 
-          twoCheckoutFlutterEvents.onShowPaymentDoneScreen();
-          break;
+        case 'authorizePaymentDidCancel':
+
+          /// Call the event handler view if payment is canceled.
+          twoCheckoutFlutterEvents.authorizePaymentDidCancel();
+
+        case 'authorizePaymentDidCompleteAuthorizing':
+
+          /// Call the event handler to use 2checkout order status api.
+          twoCheckoutFlutterEvents
+              .authorizePaymentDidCompleteAuthorizing(call.arguments);
       }
     });
   }
 
-  /// Method to initiate the display of payment methods.
-
-  Future<String?> showPaymentMethods() {
-    return TwocheckoutFlutterPlatform.instance.showPaymentMethods();
-  }
-
   /// Method to obtain the Flutter platform's method channel for communication.
-
   MethodChannel getMethodChannel() =>
       TwocheckoutFlutterPlatform.instance.getMethodChannel();
 
   /// Method to set TwoCheckout API credentials.
-
-  setTwoCheckoutCredentials(String secretKey, String merchantKey) {
+  setTwoCheckoutCredentials({required String secretKey, required String merchantCode}) {
     TwocheckoutFlutterPlatform.instance
-        .setTwoCheckCredentials(secretKey, merchantKey);
+        .setTwoCheckCredentials(secretKey, merchantCode);
   }
+
+  /// Method to get card token without ui.
+  Future<TokenResult> createToken({required String name, required String creditNumber, required String cvv, required String expiryDate, String? scope}) async {
+    final result = await TwocheckoutFlutterPlatform.instance
+        .createToken(name: name, creditNumber: creditNumber, cvv: cvv, expiryDate: expiryDate, scope: scope);
+    return TokenResult.fromJson(result);
+  }
+
+  /// Method to initiate the display of payment methods.
+  showPaymentMethods({required double price, required String currency, String local = "en"}) {
+    TwocheckoutFlutterPlatform.instance
+        .showPaymentMethods(price, currency, local);
+  }
+
+  /// Method to authorize payment with order.
+  authorizePaymentWithOrderResponse(
+      String url, Map<dynamic, dynamic> parameters,
+      {String successReturnUrl = "", String cancelReturnUrl = ""}) {
+    TwocheckoutFlutterPlatform.instance.authorizePaymentWithOrderResponse(
+        url, parameters, successReturnUrl, cancelReturnUrl);
+  }
+
 }
 
 /// Abstract class defining event callbacks related to TwoCheckout.
-
 abstract class TwoCheckoutFlutterEvents {
-  /// Callback to show a dialogue with title and detail.
+  /// Callback when payment form will show.
+  void paymentFormWillShow();
 
-  void onShowDialogue(String title, String detail);
+  /// Callback when payment form will close.
+  void paymentFormWillClose();
 
-  /// Callback to dismiss a displayed dialogue.
+  /// Callback when payment method did selected.
+  void paymentMethodSelected(PaymentMethodType paymentMethod);
 
-  void onDismissDialogue();
+  /// Callback when the payment process failed with error..
+  void paymentFailedWithError(String message);
 
-  /// Callback to show a loading spinner or progress bar.
+  /// make 2Checkout API call to create an order with the received token
+  /// https://app.swaggerhub.com/apis-docs/2Checkout-API/api-rest_documentation/6.0#/Order/post_orders_
+  void onPaymentFormComplete(PaymentFormResult paymentFormResult);
 
-  void onShowProgressBar();
+  /// Callback the event if payment is canceled..
+  void authorizePaymentDidCancel();
 
-  /// Callback to hide a loading spinner or progress bar (optional).
-
-  void onHideProgressBar();
-
-  /// Callback to show a payment confirmation screen.
-
-  void onShowPaymentDoneScreen();
-
-  /// Response Return from Api call
-
-  void onApiCallResponse();
+  /// Callback the event & use 2Checkout API for checking order status.
+  /// https://app.swaggerhub.com/apis-docs/2Checkout-API/api-rest_documentation/6.0#/Order/post_orders_
+  void authorizePaymentDidCompleteAuthorizing(Map<dynamic, dynamic> result);
 }
