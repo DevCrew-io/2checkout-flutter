@@ -90,7 +90,17 @@ class TwoCheckoutFlutterEventsImpl {
         .showPaymentMethods(price, currency, local);
   }
 
-  /// Method to authorize payment with order.
+
+  /// Authorizes a payment with the provided order response.
+  /// Use if need to authorized payment depend on the following key contain in post order api response
+  /// Credit Card: response -> PaymentDetails -> PaymentMethod -> Authorize3DS exist
+  /// Paypal: response -> PaymentDetails -> PaymentMethod -> RedirectURL exist
+  ///
+  /// @param url The Redirect URL for payment authorization. --> Credit Card: Authorize3DS.getString("Href"),  Paypal: PaymentMethod.getString("RedirectURL")
+  /// @param parameters --> Credit Card: ['avng8apitoken' : 'Authorize3DS -> Params -> avng8apitoken'],  Paypal: [:] none optional
+  /// @param successReturnUrl The URL to redirect to on successful payment (default is an empty string).
+  /// @param cancelReturnUrl The URL to redirect to if the payment is canceled (default is an empty string).
+
   authorizePaymentWithOrderResponse(
       String url, Map<dynamic, dynamic> parameters,
       {String successReturnUrl = "", String cancelReturnUrl = ""}) {
