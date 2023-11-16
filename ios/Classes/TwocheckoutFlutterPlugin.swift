@@ -16,7 +16,6 @@ public class TwocheckoutFlutterPlugin: NSObject, FlutterPlugin {
     }
     
     private var rootViewController = UIViewController()
-    
     private func getRootViewController() -> FlutterViewController? {
         return UIApplication.shared.keyWindow?.rootViewController as? FlutterViewController
     }
@@ -46,7 +45,8 @@ public class TwocheckoutFlutterPlugin: NSObject, FlutterPlugin {
                 Configuration.shared.updatePaymentDetails(arguments)
                 
                 guard !Configuration.shared.secretKey.isEmpty, !Configuration.shared.merchantCode.isEmpty else {
-                    print("secretKey or merchantCode is missing")
+                    debugPrint("secretKey or merchantCode is missing")
+                    getChannel()?.invokeMethod(OutputMethod.PAYMENT_FAILED_WITH_ERROR, arguments: ["error" : "secretKey or merchantCode is missing"])
                     return
                 }
                 
@@ -55,6 +55,12 @@ public class TwocheckoutFlutterPlugin: NSObject, FlutterPlugin {
         case InputMethod.AUTHORIZE_PAYMENT:
             if let arguments = call.arguments as? [String : Any] {
                 AuthorizePayment.shared.fromMap(arguments)
+                
+                guard !AuthorizePayment.shared.url.isEmpty, !AuthorizePayment.shared.parameters.isEmpty else {
+                    getChannel()?.invokeMethod(OutputMethod.PAYMENT_FAILED_WITH_ERROR, arguments: ["error" : "Authorize payment redirect url or parameters is missing"])
+                    return
+                }
+                
                 Verifone2COPaymentForm.authorizePayment(webConfig: getAuthWebConfig(), delegate: self, from: rootViewController)
             }
         default:
@@ -97,7 +103,7 @@ extension TwocheckoutFlutterPlugin: PaymentFlowSessionDelegate {
     }
     
     public func paymentMethodSelected(_ paymentMethod: PaymentMethodType) {
-        getChannel()?.invokeMethod(OutputMethod.PAYMENT_FORM_WILL_SHOW, arguments: ["paymentMethod" : paymentMethod.rawValue])
+        getChannel()?.invokeMethod(OutputMethod.PAYMENT_METHOD_SELECTED, arguments: ["paymentMethod" : paymentMethod.rawValue])
     }
     
     public func paymentFormComplete(_ result: Result<PaymentFormResult, Error>) {
