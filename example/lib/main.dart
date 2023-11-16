@@ -44,7 +44,7 @@ class _MyAppState extends State<MyApp> implements TwoCheckoutFlutterEvents {
 
   void showPaymentMethods() {
     /// Show payment methods using the TwoCheckoutFlutter plugin
-    _twoCheckoutFlutterPlugin.showPaymentMethods(price: 10.1, currency: "USD");
+    _twoCheckoutFlutterPlugin.showPaymentMethods(price: 10.534, currency: "USD");
   }
 
   createCardTokenWithoutUI() async {
@@ -147,8 +147,17 @@ class _MyAppState extends State<MyApp> implements TwoCheckoutFlutterEvents {
 
   @override
   void onPaymentFormComplete(PaymentFormResult paymentFormResult) {
-    /// Call 2Checkout create order api & handle its response if there is an authorized3D param in response call bellow method with required parameters.
-    _twoCheckoutFlutterPlugin.authorizePaymentWithOrderResponse("https://www.google.com", { "name" : "Najam Us Saqib, iOS Developer" });
+    /// Call 2Checkout create/post order api and fetch response.
+    /// Check either need to authorized payment then call the bellow method 'authorizePaymentWithOrderResponse' in the following key contain in order create api response
+    /// Credit Card: response -> PaymentDetails -> PaymentMethod -> Authorize3DS exist
+    /// Paypal: response -> PaymentDetails -> PaymentMethod -> RedirectURL exist
+    ///
+    /// @param url The Redirect URL for payment authorization. --> Credit Card: Authorize3DS.getString("Href"),  Paypal: PaymentMethod.getString("RedirectURL")
+    /// @param parameters --> Credit Card: ['avng8apitoken' : 'Authorize3DS -> Params -> avng8apitoken'],  Paypal: [:] none optional
+    /// @param successReturnUrl The URL to redirect to on successful payment (default is an empty string).
+    /// @param cancelReturnUrl The URL to redirect to if the payment is canceled (default is an empty string).
+    ///
+    _twoCheckoutFlutterPlugin.authorizePaymentWithOrderResponse("https://www.google.com?name=Minhaj Nadeem", {});
   }
 
   @override
@@ -161,7 +170,6 @@ class _MyAppState extends State<MyApp> implements TwoCheckoutFlutterEvents {
   void authorizePaymentDidCompleteAuthorizing(Map<dynamic, dynamic> result) {
     /// Use 2Checkout order status api to check the payment status before navigate to next screen.
     print("Dart: authorizePaymentDidCompleteAuthorizing ${result}");
-
     Navigator.push(
       context,
       MaterialPageRoute(
