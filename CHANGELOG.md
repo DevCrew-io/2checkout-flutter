@@ -7,7 +7,7 @@
 * flutter customized UI for 2 checkout android sdk
 
 
-## 0.0.2
+## 1.0.0
 
 * Error Handing.
 * Support for iOS.
