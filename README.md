@@ -1,11 +1,13 @@
-# 2Checkout Flutter
+# 2Checkout Flutter SDK
 
 [![pub package](https://img.shields.io/pub/v/com.twocheckout.twocheckout_flutter)](https://pub.dev/packages/2checkout-flutter)
 [![license](https://img.shields.io/badge/license-MIT-green)](https://github.com/DevCrew-io/2checkout-flutter/LICENSE)
 ![](https://img.shields.io/badge/Code-Dart-informational?style=flat&logo=dart&color=29B1EE)
 ![](https://img.shields.io/badge/Code-Flutter-informational?style=flat&logo=flutter&color=0C459C)
 
-The 2Checkout Flutter SDK wrapper for [2checkout-android-sdk](https://github.com/2Checkout/2checkout-android-sdk) allows you to build delightful payment experiences in your native Android (for iOS work is in progress). We provide powerful and customizable UI screens, widget, and method channels for native functions access that can be used out-of-the-box to collect your users' payment details.
+The 2Checkout Flutter SDK wrapper for [2checkout-android-sdk](https://github.com/2Checkout/2checkout-android-sdk) and [2checkout-ios-sdk](https://github.com/2Checkout/2checkout-ios-sdk) allows you to build delightful payment experiences in your native Android and iOS. We provide powerful and customizable UI screens, widget, and method channels for native functions access that can be used out-of-the-box to collect your users' payment details.
+
+The 2Checkout Flutter SDK is designed to be easy to integrate into your application. With the 2Checkout Flutter SDK, you can easily tokenize card details, handle 3D Secure verification, and authorize PayPal payments.
 
 <img src="https://github.com/DevCrew-io/2checkout-flutter/blob/readme/screenshots/1.png" alt="Alt Text" width="300">
 
@@ -18,9 +20,33 @@ The 2Checkout Flutter SDK wrapper for [2checkout-android-sdk](https://github.com
 - **Native UI**: We provide native screens and elements to securely collect payment details on Android and iOS.
 - **Pre-built payments UI**: Learn how to integrate Payment Sheet, the new pre-built payments UI for mobile apps. This pre-built UI lets you accept cards and Paypal out of the box.
 
+## Supported Payment Methods
+
+- Credit Card Tokenization
+- 3D Secure Authorization
+- Paypal Payment Authorization
+
 ## Recommended usage
 
 If you're selling digital products or services within your app, (e.g. subscriptions, in-game currencies, game levels, access to premium content, or unlocking a full version), you must use the app store's in-app purchase APIs. See Apple's and Google's guidelines for more information. For all other scenarios you can use this SDK to process payments via 2checkout.
+
+## Requirements
+### Android Requirements
+
+- Use Android 4.0 (API level 19) and above.
+- Utilize Kotlin version 1.7.0 and above.
+- Ensure you are using an up-to-date Android Gradle build tools version.
+- Use an up-to-date Gradle version accordingly.
+- Remember to rebuild the app after making the above changes, as these changes may not take effect with hot reload.
+
+### iOS Requirements
+
+- Xcode 10.2 or higher
+- Swift 5.0 or higher
+- iOS 12 or higher
+
+If you encounter difficulties while setting up the package on Android, join the discussion for support.
+
 
 ## Installation
 
@@ -30,96 +56,78 @@ To install the 2Checkout Flutter plugin, use the following Dart package command:
 dart pub add twocheckout_flutter
 ```
 
-## Requirements
-### Android Requirements
-
-To ensure proper functionality on Android devices, please make sure to follow these steps:
-
-1. Use Android 4.0 (API level 19) and above.
-2. Utilize Kotlin version 1.7.0 and above.
-3. Ensure you are using an up-to-date Android Gradle build tools version.
-4. Use an up-to-date Gradle version accordingly.
-5. Remember to rebuild the app after making the above changes, as these changes may not take effect with hot reload.
-
-If you encounter difficulties while setting up the package on Android, join the discussion for support.
-
-# Usage
-## Card Payments
-You can handle card payments using two methods: PayPal integration and Card Form.
-
-## Financial Connections
-The latest SDK also supports financial connections. Refer to the documentation to learn more about setting it up.
-
 ## Dart API
 The library offers several methods for handling 2Checkout-related actions: 
 
-Callback to show a dialogue with title and detail.
-```dart
-void onShowDialogue(String title, String detail);
+Callback when payment form will show.
+ ```dart
+  void paymentFormWillShow();
 ```
-Callback to dismiss a displayed dialogue.
 
+Callback when payment form will close.
 ```dart
-void onDismissDialogue();
+  void paymentFormWillClose();
 ```
-Callback to show a loading spinner or progress bar.
+
+Callback when a payment method did selected.
 ```dart
-void onShowProgressBar();
+  void paymentMethodSelected(PaymentMethodType paymentMethod);
 ```
-Callback to hide a loading spinner or progress bar (optional).
+
+Callback when the payment process failed with error.
 ```dart
-void onHideProgressBar();
+  void paymentFailedWithError(String message);
 ```
-Callback to show a payment confirmation screen.
+
+Callback when card input form is completed and call 2Checkout API here for [post order](https://app.swaggerhub.com/apis-docs/2Checkout-API/api-rest_documentation/6.0-oas3#/Order/post_orders_) with the received token.
 ```dart
-void onShowPaymentDoneScreen();
+  void onPaymentFormComplete(PaymentFormResult paymentFormResult);
 ```
-Response Return from Api call
+
+Callback when payment is canceled.
 ```dart
-void onApiCallResponse();
+  void authorizePaymentDidCancel();
 ```
+Callback when 3D auth will be completed and here  you can call 2Checkout order status ("orders/\(refNo)") API here to check the payment transactio status.
+```dart
+   void authorizePaymentDidCompleteAuthorizing(Map<dynamic, dynamic> result);
+```
+
+## Usage
+
 ### Initialization of 2Checkout SDK
 ```dart
-_twoCheckoutFlutterPlugin.setTwoCheckoutCredentials(
-"secretKey", "merchant_key");
+  _twoCheckoutFlutterPlugin.setTwoCheckoutCredentials(secretKey: "Your_Key", merchantCode: "Your_Key");
 ```
 
-Customization of native code on the Flutter side makes it easier for Flutter developers to perform actions such as displaying alert dialogues, dismissing/loading spinners, and navigating to customized pages.
-you just need to implement TwoCheckoutFlutterEvents class to override your required methods
+### Start 2Checkout Payment Flow
 ```dart
-  @override
-void onHideProgressBar() {
-  dismissProgressBar();
-}
+  _twoCheckoutFlutterPlugin.showPaymentMethods(price: 10.5, currency: "USD", local: "en");
+```
 
-@override
-void onShowDialogue(String title, String detail) {
-  showMyDialog(title,detail);
-}
+### Authorize the Card 3DS or PayPal payment using the authorizePaymentWithOrderResponse method. 
 
-@override
-void onShowPaymentDoneScreen() {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (BuildContext context) => const PaymentFlowDoneScreen(
-        label: 'Customer label',
-        amount: '10 USD',
-        ref: 'ref',
-      ),
-    ),
-  );
-}
+```dart
+  /// Authorizes a payment with the post order response.
+  /// If need to authorized payment depending on the following key contain in post order api response
+  /// Credit Card: response -> PaymentDetails -> PaymentMethod -> Authorize3DS exist
+  /// Paypal: response -> PaymentDetails -> PaymentMethod -> RedirectURL exist
+  ///
+  /// @param url The Redirect URL for payment authorization. --> Credit Card: Authorize3DS.getString("Href"),  Paypal: PaymentMethod.getString("RedirectURL")
+  /// @param parameters --> Credit Card: ['avng8apitoken' : 'Authorize3DS -> Params -> avng8apitoken'],  Paypal: [:] none optional
+  /// @param successReturnUrl The URL to redirect to on successful payment (default is an empty string).
+  /// @param cancelReturnUrl The URL to redirect to if the payment is canceled (default is an empty string).
+  ///
+  _twoCheckoutFlutterPlugin.authorizePaymentWithOrderResponse(
+      String url, Map<dynamic, dynamic> parameters,
+      {String successReturnUrl = "", String cancelReturnUrl = ""});
+```
 
-@override
-void onShowProgressBar() {
-  progressDialogue(context);
-}
+## Card tokenisation without UI
 
-@override
-void onDismissDialogue() {
-  // TODO: implement onDismissDialogue
-}
+A method that can be used to generate a payment token based on provided card data.
+```dart
+    TokenResult result = await _twoCheckoutFlutterPlugin.createToken(name: "CARD_HOLDER_NAME", creditNumber: "CARD_NUMBER", cvv: "xxx", expiryDate: "xx/xx");
 ```
 
 # Running the Example App
