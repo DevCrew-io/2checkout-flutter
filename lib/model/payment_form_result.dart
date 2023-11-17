@@ -5,7 +5,7 @@
 //  Copyright © 2023 DevCrew I/O
 //
 
-import 'package:twocheckout_flutter/model/PaymentMethodType.dart';
+import 'package:twocheckout_flutter/model/payment_method_type.dart';
 
 class PaymentFormResult {
   late String cardHolder;
