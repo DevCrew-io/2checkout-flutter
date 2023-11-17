@@ -97,7 +97,7 @@ Callback when 3D auth will be completed and here  you can call 2Checkout order s
 
 ### Initialization of 2Checkout SDK
 ```dart
-  _twoCheckoutFlutterPlugin.setTwoCheckoutCredentials(secretKey: "Your_Key", merchantCode: "Your_Key");
+  _twoCheckoutFlutterPlugin.setTwoCheckoutCredentials(secretKey: "Your_Key", merchantCode: "Your_Code");
 ```
 
 ### Start 2Checkout Payment Flow

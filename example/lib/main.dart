@@ -39,7 +39,7 @@ class _MyAppState extends State<MyApp> implements TwoCheckoutFlutterEvents {
         TwoCheckoutFlutterEventsImpl(twoCheckoutFlutterEvents: this);
 
     /// Set 2Checkout credentials
-    _twoCheckoutFlutterPlugin.setTwoCheckoutCredentials(secretKey: "l_r4hBv?DV~03]dubI[#", merchantCode: "254731075008");
+    _twoCheckoutFlutterPlugin.setTwoCheckoutCredentials(secretKey: "Your_Key", merchantCode: "Your_Code");
   }
 
   void showPaymentMethods() {
