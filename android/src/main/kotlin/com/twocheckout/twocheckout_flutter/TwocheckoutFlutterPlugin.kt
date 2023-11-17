@@ -10,6 +10,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import com.twocheckout.twocheckout_flutter.Model.AuthorizePayment
+import com.twocheckout.twocheckout_flutter.Model.CardFactory
 import com.twocheckout.twocheckout_flutter.Model.Configuration
 import com.twocheckout.twocheckout_flutter.datapack.FormUICustomizationData
 import com.twocheckout.twocheckout_flutter.datapack.PaymentConfigurationData
@@ -77,7 +78,19 @@ class TwocheckoutFlutterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
         when (call.method) {
             InputMethod.CREATE_TOKEN-> {
-
+                val arguments: Map<String, Any>? = call.arguments()
+                arguments?.let {
+                    val card = CardFactory.createCardFromMap(arguments)
+                    TwoCheckoutPaymentForm.getCardPaymentToken(Configuration.merchantCode, card, onTokenReady = {
+                        val arguments = hashMapOf<String, Any>()
+                        if (it.isEmpty()) {
+                            arguments["error"] = "There is something wrong, Please try again later"
+                        } else {
+                            arguments["token"] = it
+                        }
+                        result.success(arguments)
+                    })
+                }
             }
 
             InputMethod.SET_2CHECKOUT_CREDENTIALS-> {
