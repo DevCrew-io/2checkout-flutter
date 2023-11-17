@@ -4,13 +4,11 @@
 //
 //  Copyright © 2023 DevCrew I/O
 //
-import 'dart:convert';
 
 import 'package:flutter/services.dart';
-import 'package:twocheckout_flutter/model/PaymentMethodType.dart';
-import 'package:twocheckout_flutter/model/TokenResult.dart';
-
-import 'model/PaymentFormResult.dart';
+import 'model/payment_form_result.dart';
+import 'model/payment_method_type.dart';
+import 'model/token_result.dart';
 import 'twocheckout_flutter_platform_interface.dart';
 
 

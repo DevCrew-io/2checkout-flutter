@@ -29,7 +29,7 @@ void main() {
         .setMockMethodCallHandler(channel, null);
   });
 
-  // test('getPlatformVersion', () async {
-  //   // expect(await platform.showPaymentMethods(), '42');
-  // });
+  test('getPlatformVersion', () async {
+    expect(await platform.showPaymentMethods(41.5, "USD", "en"), '42');
+  });
 }

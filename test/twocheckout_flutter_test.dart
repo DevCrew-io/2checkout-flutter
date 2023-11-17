@@ -6,8 +6,8 @@
 //
 import 'package:flutter/src/services/platform_channel.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:twocheckout_flutter/model/PaymentFormResult.dart';
-import 'package:twocheckout_flutter/model/PaymentMethodType.dart';
+import 'package:twocheckout_flutter/model/payment_form_result.dart';
+import 'package:twocheckout_flutter/model/payment_method_type.dart';
 import 'package:twocheckout_flutter/twocheckout_flutter.dart';
 import 'package:twocheckout_flutter/twocheckout_flutter_platform_interface.dart';
 import 'package:twocheckout_flutter/twocheckout_flutter_method_channel.dart';
@@ -68,7 +68,7 @@ void main() {
         MockTwocheckoutFlutterPlatform();
     TwocheckoutFlutterPlatform.instance = fakePlatform;
 
-    // expect(await twocheckoutFlutterPlugin.showPaymentMethods(), '42');
+    expect(await twocheckoutFlutterPlugin.showPaymentMethods(price: 41.1, currency: "USD"), '42');
   });
 }
 

@@ -22,10 +22,10 @@ class MethodChannelTwocheckoutFlutter extends TwocheckoutFlutterPlatform {
   }
 
   @override
-  setTwoCheckCredentials(String secretKey, String merchantKey) {
+  setTwoCheckCredentials(String secretKey, String merchantCode) {
     final Map<String, dynamic> arguments = {
       'secretKey': secretKey,
-      'merchantCode': merchantKey,
+      'merchantCode': merchantCode,
     };
     methodChannel.invokeMethod<String>('setTwoCheckCredentials', arguments);
   }

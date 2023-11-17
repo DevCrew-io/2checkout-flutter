@@ -8,9 +8,8 @@
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:twocheckout_flutter/model/PaymentFormResult.dart';
-import 'package:twocheckout_flutter/model/PaymentMethodType.dart';
-
+import 'package:twocheckout_flutter/model/payment_form_result.dart';
+import 'package:twocheckout_flutter/model/payment_method_type.dart';
 import 'package:twocheckout_flutter/twocheckout_flutter.dart';
 
 void main() {
