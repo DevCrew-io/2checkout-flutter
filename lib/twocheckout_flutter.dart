@@ -121,14 +121,14 @@ abstract class TwoCheckoutFlutterEvents {
   /// Callback when payment method did selected.
   void paymentMethodSelected(PaymentMethodType paymentMethod);
 
-  /// Callback when the payment process failed with error..
+  /// Callback when the payment process failed with error.
   void paymentFailedWithError(String message);
 
-  /// make 2Checkout API call to create an order with the received token
-  /// https://app.swaggerhub.com/apis-docs/2Checkout-API/api-rest_documentation/6.0#/Order/post_orders_
+  /// Callback when card input form is completed and call 2Checkout API here for post order with the received token.
+  /// https://app.swaggerhub.com/apis-docs/2Checkout-API/api-rest_documentation/6.0-oas3#/Order/post_orders_
   void onPaymentFormComplete(PaymentFormResult paymentFormResult);
 
-  /// Callback the event if payment is canceled..
+  /// Callback the event if payment is canceled.
   void authorizePaymentDidCancel();
 
   /// Callback the event & use 2Checkout API for checking order status.
