@@ -1,0 +1,38 @@
+"switchButtonText" = "Save details for next time";
+"cardHolderNameInvalid" = "Card holder name is invalid";
+"cardExpired" = "Kortti on vanhentunut";
+"cardExpiryDateFormat" = "Virheellinen päivämäärä. Muoto = kk/vv";
+"cardNumberLabel" = "Kortin numero";
+"cardNumberPlaceholder" = "Korttisi numero";
+"cardTitle" = "Luottokortti";
+"cvvLabel" = "CVV";
+"cvvNotValid" = "CVV-numero on virheellinen";
+"cvvPlaceholder3" = "CVV";
+"cvvPlaceholder4" = "CVV";
+"expiryPlaceholder" = "KK/VV";
+"footerText" = "Suojatut maksut tarjoaa Verifone";
+"languageName" = "Suomi";
+"lengthNotValid" = "Kortin numero ei ole oikean pituinen";
+"monthNotValid" = "Vanhenemiskuukauden on oltava arvo väliltä 1 ja 12";
+"nrNotValid" = "Kortin numero on virheellinen";
+"submitPay" = "Maksa";
+"submitTitle" = "Vahvista";
+"yearNotValid" = "Vanhenemisvuosi ei voi ylittää vuotta";
+"customerText" = "Asiakas";
+"cardExpiryDateFormat" = "Virheellinen päivämäärä. Muoto = kk/vv";
+"paymentSelectTitle" = "Valitse maksutapa";
+
+"paymentProductCard" = "Luottokortti";
+"paymentProductPaypal" = "PayPal";
+"paymentProductGooglePay" = "Google Pay";
+"paymentProductApplePay" = "Apple Pay";
+"paymentProductKlarna" = "Klarna";
+"paymentProductVipps" = "Vipps";
+"paymentProductSwish" = "Swish";
+"paymentProductMobilePay" = "MobilePay";
+"paymentProductCrypto" = "Krypto";
+
+"transactionIncorrectCardInformation" = "Virheelliset korttitiedot";
+"transactionIncorrectCVV" = "Virheellinen CVV";
+"cancelButtonText" = "Palaa kauppaan";
+"footerText" = "Suojatut maksut tarjoaa";

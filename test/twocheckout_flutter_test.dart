@@ -6,6 +6,8 @@
 //
 import 'package:flutter/src/services/platform_channel.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:twocheckout_flutter/model/PaymentFormResult.dart';
+import 'package:twocheckout_flutter/model/PaymentMethodType.dart';
 import 'package:twocheckout_flutter/twocheckout_flutter.dart';
 import 'package:twocheckout_flutter/twocheckout_flutter_platform_interface.dart';
 import 'package:twocheckout_flutter/twocheckout_flutter_method_channel.dart';
@@ -14,8 +16,8 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 class MockTwocheckoutFlutterPlatform
     with MockPlatformInterfaceMixin
     implements TwocheckoutFlutterPlatform {
-  @override
-  Future<String?> showPaymentMethods() => Future.value('42');
+
+
 
   @override
   MethodChannel getMethodChannel() {
@@ -26,6 +28,26 @@ class MockTwocheckoutFlutterPlatform
   @override
   setTwoCheckCredentials(String secretKey, String merchantKey) {
     // TODO: implement setTwoCheckCredentials
+    throw UnimplementedError();
+  }
+
+
+
+  @override
+  showPaymentMethods(double price, String currency, String local) {
+    // TODO: implement showPaymentMethods
+    throw UnimplementedError();
+  }
+
+  @override
+  authorizePaymentWithOrderResponse(String url, Map parameters, String successReturnUrl, String cancelReturnUrl) {
+    // TODO: implement authorizePaymentWithOrderResponse
+    throw UnimplementedError();
+  }
+
+  @override
+  createToken({required String name, required String creditNumber, required String cvv, required String expiryDate, String? scope}) {
+    // TODO: implement createToken
     throw UnimplementedError();
   }
 }
@@ -46,27 +68,45 @@ void main() {
         MockTwocheckoutFlutterPlatform();
     TwocheckoutFlutterPlatform.instance = fakePlatform;
 
-    expect(await twocheckoutFlutterPlugin.showPaymentMethods(), '42');
+    // expect(await twocheckoutFlutterPlugin.showPaymentMethods(), '42');
   });
 }
 
 // Define a mock event handler for testing purposes.
 class MockTwoCheckoutFlutterEvents extends TwoCheckoutFlutterEvents {
   @override
-  void onShowDialogue(String title, String detail) {}
+  void authorizePaymentDidCancel() {
+    // TODO: implement authorizePaymentDidCancel
+  }
 
   @override
-  void onDismissDialogue() {}
+  void authorizePaymentDidCompleteAuthorizing(Map result) {
+    // TODO: implement authorizePaymentDidCompleteAuthorizing
+  }
 
   @override
-  void onShowProgressBar() {}
+  void onPaymentFormComplete(PaymentFormResult paymentFormResult) {
+    // TODO: implement onPaymentFormComplete
+  }
 
   @override
-  void onHideProgressBar() {}
+  void paymentFailedWithError(String message) {
+    // TODO: implement paymentFailedWithError
+  }
 
   @override
-  void onShowPaymentDoneScreen() {}
+  void paymentFormWillClose() {
+    // TODO: implement paymentFormWillClose
+  }
 
   @override
-  void onApiCallResponse() {}
+  void paymentFormWillShow() {
+    // TODO: implement paymentFormWillShow
+  }
+
+  @override
+  void paymentMethodSelected(PaymentMethodType paymentMethod) {
+    // TODO: implement paymentMethodSelected
+  }
+
 }

@@ -6,3 +6,12 @@
 * 2checkout sdk android integrated in flutter
 * flutter customized UI for 2 checkout android sdk
 
+
+## 0.0.2
+
+* Error Handing.
+* Support for iOS.
+* Compatible for both Android and iOS.
+* Update dart api, More customisable and easy to use.
+* Expose a method that can be used to generate a payment token based on provided card data.
+

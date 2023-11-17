@@ -1,0 +1,36 @@
+"switchButtonText" = "Save details for next time";
+"cardHolderNameInvalid" = "Card holder name is invalid";
+"cardExpired" = "Срок действия карты истек.";
+"cardExpiryDateFormat" = "Неверный формат даты. Укажите дату в формате ММ/ГГ.";
+"cardExpiryLabel" = "Действует до";
+"cardNumberLabel" = "Номер карты";
+"cardNumberPlaceholder" = "Номер вашей карты";
+"cardTitle" = "Кредитная карта";
+"cvvLabel" = "CVV";
+"cvvNotValid" = "Недействительный номер CVV.";
+"cvvPlaceholder3" = "CVV";
+"cvvPlaceholder4" = "CVV";
+"expiryPlaceholder" = "ММ/ГГ";
+"footerText" = "Система безопасных платежей Verifone.";
+"languageName" = "Русский";
+"lengthNotValid" = "Длина номера карты не соответствует требованиям.";
+"monthNotValid" = "Месяц истечения срока действия должен быть от 1 до 12";
+"nrNotValid" = "Номер карты недействителен.";
+"submitPay" = "Оплатить";
+"submitTitle" = "Подтвердить";
+"yearNotValid" = "Год истечения срока действия не может быть позже";
+"customerText" = "Клиент";
+"cardExpiryDateFormat" = "Неверный формат даты. Укажите дату в формате ММ/ГГ.";
+"paymentSelectTitle" = "Выберите способ оплаты";
+
+"paymentProductCard" = "Кредитная карта";
+"paymentProductPaypal" = "PayPal";
+"paymentProductGooglePay" = "Google Pay";
+"paymentProductApplePay" = "Apple Pay";
+"paymentProductKlarna" = "Klarna";
+"paymentProductVipps" = "Vipps";
+"paymentProductSwish" = "Swish";
+"paymentProductMobilePay" = "MobilePay";
+"paymentProductCrypto" = "Криптовалюта";
+
+"footerText" = "Система безопасных платежей";
