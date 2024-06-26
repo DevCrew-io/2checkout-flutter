@@ -9,7 +9,7 @@ The 2Checkout Flutter SDK wrapper for [2checkout-android-sdk](https://github.com
 
 The 2Checkout Flutter SDK is designed to be easy to integrate into your application. With the 2Checkout Flutter SDK, you can easily tokenize card details, handle 3D Secure verification, and authorize PayPal payments.
 
-<img src="https://github.com/DevCrew-io/2checkout-flutter/blob/readme/screenshots/1.png" alt="Alt Text" width="300">
+<img src="https://github.com/DevCrew-io/2checkout-flutter/blob/main/screenshots/1.png" alt="Alt Text" width="300">
 
 
 ## Features
