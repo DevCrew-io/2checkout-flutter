@@ -4,10 +4,10 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'twocheckout_flutter'
-  s.version          = '0.0.1'
-  s.summary          = 'A new Flutter project.'
+  s.version          = '1.0.1'
+  s.summary          = 'A wrapper flutter plugin for implementation of 2checkout-android-sdk.'
   s.description      = <<-DESC
-A new Flutter project.
+A wrapper flutter plugin for implementation of 2checkout-android-sdk.
                        DESC
   s.homepage         = 'https://pub.dev/packages/twocheckout_flutter/example'
   s.license          = { :file => '../LICENSE' }
